@@ -19,12 +19,14 @@
 \usepackage{url}
 \hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=blue}
 
-% The artifact URL form is the ONLY content difference between targets
-% (besides the author matter, which tmlr.sty itself switches): named
-% repository in the preprint build, anonymized mirror in the TMLR build.
-% The concrete URLs resolve at PKG-REPO; placeholders compile until then.
+% The artifact reference form is the ONLY content difference between targets
+% (besides the author matter, which tmlr.sty itself switches). Named
+% repository in the preprint build; in the anonymous build the artifact
+% travels WITH the submission as supplementary material (operator ruling
+% 2026-07-24), which keeps the release inside the double-blind envelope
+% instead of behind a third-party proxy that would require a public repo.
 \ifanon
-  \newcommand{\ArtifactRepoURL}{\url{https://anonymous.4open.science/r/ANONYMIZED-MIRROR-PLACEHOLDER}}
+  \newcommand{\ArtifactRepoURL}{Supplementary material accompanying this submission}
 \else
   \newcommand{\ArtifactRepoURL}{\url{https://github.com/Sup3rn0vaN0w/mainlabs-reservation-discipline}}
 \fi
