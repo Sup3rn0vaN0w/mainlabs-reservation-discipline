@@ -1,0 +1,18 @@
+# H2 LOAD SWEEP (spec Section 7): served value vs offered load, 0.5x to 3.0x, on two
+# representative mixes. Feeds the H2 AUC in the H1 readout (papers only, not filing).
+# House style: hyphens only (D-026).
+policies: [fcfs, vllm_style, niyama_style, concur_style, fastserve_mlfq, mars_style, reservation]
+seeds: [1, 2, 3]
+tuned_params: configs/tuned_params.json
+cell:
+  horizon_s: 1500.0
+  warmup_s: 150.0
+  tick_s: 0.5
+  slots: 16
+  hbm_gib: 80.0
+  capacity_per_device: 8.0
+axes:
+  mix: [0.10, 0.50]                      # two representative mixes
+  load: [0.5, 0.75, 1.0, 1.5, 2.0, 3.0]  # the 0.5x-3.0x graceful-degradation sweep
+  num_devices: [2]
+  gap_median_s: [20]

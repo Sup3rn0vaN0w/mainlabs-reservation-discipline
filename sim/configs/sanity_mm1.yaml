@@ -1,0 +1,39 @@
+# SG1 sanity configuration: M/M/1-degenerate.
+# House style: hyphens only (D-026).
+#
+# Purpose: reduce the simulator to a textbook M/M/1 queue so the engine's
+# accounting (Little's law) and physics (rho / (1-rho)) can be checked against
+# closed-form theory. This is a SANITY HARNESS config, not part of the spec's
+# experiment matrix.
+#
+# Degeneracy conditions:
+#  - ONE device, max_concurrent_decodes = 1  -> a single server, no batching.
+#  - prefill_tokens = 0                       -> pure decode service.
+#  - output_tokens ~ Exponential             -> at batch 1 the per-request decode
+#                                               rate is constant, so service time
+#                                               S = output_tokens / single_stream
+#                                               is exponential -> M/M/1.
+#  - Poisson arrivals                         -> Markovian arrivals.
+#  - HBM ample                                -> no paging/spill.
+#
+# With single_stream_tokens_per_s = 100 and mean output tokens = 60,
+#   E[S] = 0.6 s. At arrival rate 1.0 flows/s, rho = 0.6, and
+#   L_theory = rho / (1 - rho) = 1.5.
+
+seed: 20260713
+
+cluster:
+  num_devices: 1
+  device:
+    hbm_capacity_gib: 80.0        # ample; no paging in the degenerate config
+    max_concurrent_decodes: 1     # single server -> M/M/1
+
+workload:
+  kind: mm1_degenerate
+  arrival_rate_per_s: 1.0         # Poisson lambda (flows/s)
+  mean_output_tokens: 60.0        # Exponential mean; E[S] = 60/100 = 0.6 s
+  prefill_tokens: 0
+
+run:
+  horizon_s: 20000.0              # ~20000 arrivals at lambda = 1.0
+  warmup_s: 1000.0               # discard initial transient before measuring

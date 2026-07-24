@@ -1,0 +1,37 @@
+\section{Admission test and ledger invariants}
+
+{\small
+\begin{verbatim}
+State, per pool p: reserved set R_p with bound K_p; capacity vector Cap_p
+(compute, device memory, spill-tier memory and restore bandwidth); forecast
+window W; committed(p, t) = sum over r in R_p of r's remaining claim
+profile over [t, t+W]; per-class budget quotas Q_c; per-tenant envelopes
+E_g.
+
+ADMIT(f) for flow f with descriptor (class c, tenant g, budget b, footprint
+m, profile est):
+  1. |R_p| < K_p
+  2. committed(p, t) + claim(est) <= ceiling(p) for all t in window
+  3. exists device set D: pinnable(m, D) under embodiment (strict: resident
+     throughout; tiered: resident-active plus reserved spill and reserved
+     restore within bound L_restore)
+  4. spent(c) + b <= Q_c and within E_g
+  5. trust(f) >= eligibility threshold for reservation
+  All pass: grant r(f), append to ledger, R_p += {f}.
+  Any fail: route to class c best-effort, or decline with optional quote.
+
+Events: RENEW is ADMIT at current state with no carried privilege. EXPIRE
+and EXHAUST release r(f) with the class's disposition. HALT(authority)
+releases r(f) immediately; it is the only release not initiated by the
+flow's own lifecycle.
+
+Invariants (any interleaving of admit, renew, expire, exhaust, halt):
+  I1 Compute: committed(p, t) <= ceiling(p) <= Cap_p at all t.
+  I2 Memory: pinned bytes + reserved spill/restore never exceed their
+     tiers; a tiered-pin flow always has a reserved restore path.
+  I3 Budget conservation: metered decode tokens of f never exceed b; quota
+     accounting is exact under renegotiation.
+  I4 Guarantee monotonicity: once granted, r(f) is removed only by expire,
+     exhaust, or halt; no capacity condition appears in any release path.
+\end{verbatim}
+}

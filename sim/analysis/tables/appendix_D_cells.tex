@@ -1,0 +1,115 @@
+\begin{longtable}{llrrl}
+\toprule
+cell & best baseline & improvement & 95\% CI & guardrail \\
+\midrule
+\endhead
+\texttt{mix0.1\_load0.7\_dev16\_gap20.0} & fcfs & -7.8\% & [-7.8\%, +9.6\%] & ok \\
+\texttt{mix0.1\_load0.7\_dev16\_gap300.0} & fcfs & -6.9\% & [-6.9\%, +9.1\%] & ok \\
+\texttt{mix0.1\_load0.7\_dev16\_gap60.0} & fcfs & -7.3\% & [-7.3\%, +9.3\%] & ok \\
+\texttt{mix0.1\_load0.7\_dev32\_gap20.0} & fcfs & -7.3\% & [-7.7\%, +9.9\%] & ok \\
+\texttt{mix0.1\_load0.7\_dev32\_gap300.0} & fcfs & -6.6\% & [-6.7\%, +9.2\%] & ok \\
+\texttt{mix0.1\_load0.7\_dev32\_gap60.0} & fcfs & -7.0\% & [-7.2\%, +9.5\%] & ok \\
+\texttt{mix0.1\_load0.7\_dev8\_gap20.0} & fcfs & -8.5\% & [-8.5\%, +8.5\%] & ok \\
+\texttt{mix0.1\_load0.7\_dev8\_gap300.0} & fcfs & -7.8\% & [-7.8\%, +7.9\%] & ok \\
+\texttt{mix0.1\_load0.7\_dev8\_gap60.0} & fcfs & -8.1\% & [-8.1\%, +8.0\%] & ok \\
+\texttt{mix0.1\_load1.0\_dev16\_gap20.0} & vllm\_style & -23.2\% & [-23.2\%, -3.7\%] & ok \\
+\texttt{mix0.1\_load1.0\_dev16\_gap300.0} & vllm\_style & -23.2\% & [-23.2\%, -3.3\%] & ok \\
+\texttt{mix0.1\_load1.0\_dev16\_gap60.0} & vllm\_style & -23.2\% & [-23.2\%, -3.6\%] & ok \\
+\texttt{mix0.1\_load1.0\_dev32\_gap20.0} & vllm\_style & -23.5\% & [-23.5\%, -4.1\%] & ok \\
+\texttt{mix0.1\_load1.0\_dev32\_gap300.0} & vllm\_style & -23.5\% & [-23.5\%, -3.4\%] & ok \\
+\texttt{mix0.1\_load1.0\_dev32\_gap60.0} & vllm\_style & -23.5\% & [-23.5\%, -3.6\%] & ok \\
+\texttt{mix0.1\_load1.0\_dev8\_gap20.0} & vllm\_style & -22.5\% & [-22.7\%, -3.3\%] & ok \\
+\texttt{mix0.1\_load1.0\_dev8\_gap300.0} & fastserve\_mlfq & -22.6\% & [-22.7\%, -5.0\%] & FAIL (+77.2\%) \\
+\texttt{mix0.1\_load1.0\_dev8\_gap60.0} & vllm\_style & -22.6\% & [-22.7\%, -3.0\%] & ok \\
+\texttt{mix0.1\_load1.3\_dev16\_gap20.0} & niyama\_style & -10.6\% & [-10.9\%, +9.2\%] & ok \\
+\texttt{mix0.1\_load1.3\_dev16\_gap300.0} & niyama\_style & -10.7\% & [-11.1\%, +9.5\%] & ok \\
+\texttt{mix0.1\_load1.3\_dev16\_gap60.0} & niyama\_style & -10.7\% & [-11.0\%, +9.7\%] & ok \\
+\texttt{mix0.1\_load1.3\_dev32\_gap20.0} & niyama\_style & -10.6\% & [-10.7\%, +9.1\%] & ok \\
+\texttt{mix0.1\_load1.3\_dev32\_gap300.0} & niyama\_style & -10.8\% & [-10.9\%, +10.1\%] & ok \\
+\texttt{mix0.1\_load1.3\_dev32\_gap60.0} & niyama\_style & -10.7\% & [-10.8\%, +9.9\%] & ok \\
+\texttt{mix0.1\_load1.3\_dev8\_gap20.0} & niyama\_style & -10.0\% & [-10.7\%, +9.1\%] & ok \\
+\texttt{mix0.1\_load1.3\_dev8\_gap300.0} & niyama\_style & -10.2\% & [-10.8\%, +9.2\%] & ok \\
+\texttt{mix0.1\_load1.3\_dev8\_gap60.0} & niyama\_style & -10.1\% & [-10.7\%, +8.8\%] & ok \\
+\texttt{mix0.1\_load1.5\_dev16\_gap20.0} & niyama\_style & +2.2\% & [+1.5\%, +19.7\%] & ok \\
+\texttt{mix0.1\_load1.5\_dev16\_gap300.0} & niyama\_style & +2.0\% & [+1.3\%, +20.3\%] & ok \\
+\texttt{mix0.1\_load1.5\_dev16\_gap60.0} & niyama\_style & +2.1\% & [+1.4\%, +20.3\%] & ok \\
+\texttt{mix0.1\_load1.5\_dev32\_gap20.0} & niyama\_style & +1.8\% & [+1.6\%, +19.5\%] & ok \\
+\texttt{mix0.1\_load1.5\_dev32\_gap300.0} & niyama\_style & +1.7\% & [+1.5\%, +20.5\%] & ok \\
+\texttt{mix0.1\_load1.5\_dev32\_gap60.0} & niyama\_style & +1.7\% & [+1.6\%, +20.2\%] & ok \\
+\texttt{mix0.1\_load1.5\_dev8\_gap20.0} & niyama\_style & +2.5\% & [+1.9\%, +20.0\%] & ok \\
+\texttt{mix0.1\_load1.5\_dev8\_gap300.0} & niyama\_style & +2.3\% & [+1.8\%, +20.9\%] & ok \\
+\texttt{mix0.1\_load1.5\_dev8\_gap60.0} & niyama\_style & +2.4\% & [+1.8\%, +20.6\%] & ok \\
+\texttt{mix0.3\_load0.7\_dev16\_gap20.0} & fcfs & -10.9\% & [-11.2\%, +10.9\%] & ok \\
+\texttt{mix0.3\_load0.7\_dev16\_gap300.0} & fcfs & -7.9\% & [-8.0\%, +9.7\%] & ok \\
+\texttt{mix0.3\_load0.7\_dev16\_gap60.0} & fcfs & -9.2\% & [-9.4\%, +10.7\%] & ok \\
+\texttt{mix0.3\_load0.7\_dev32\_gap20.0} & fcfs & -10.5\% & [-11.0\%, +11.0\%] & ok \\
+\texttt{mix0.3\_load0.7\_dev32\_gap300.0} & fcfs & -7.4\% & [-7.7\%, +9.4\%] & ok \\
+\texttt{mix0.3\_load0.7\_dev32\_gap60.0} & fcfs & -8.9\% & [-9.2\%, +10.6\%] & ok \\
+\texttt{mix0.3\_load0.7\_dev8\_gap20.0} & fcfs & -11.0\% & [-11.6\%, +10.4\%] & ok \\
+\texttt{mix0.3\_load0.7\_dev8\_gap300.0} & fcfs & -8.6\% & [-8.7\%, +8.7\%] & ok \\
+\texttt{mix0.3\_load0.7\_dev8\_gap60.0} & fcfs & -9.7\% & [-10.1\%, +10.1\%] & ok \\
+\texttt{mix0.3\_load1.0\_dev16\_gap20.0} & vllm\_style & -23.3\% & [-23.3\%, -7.9\%] & ok \\
+\texttt{mix0.3\_load1.0\_dev16\_gap300.0} & vllm\_style & -23.3\% & [-23.3\%, -4.1\%] & ok \\
+\texttt{mix0.3\_load1.0\_dev16\_gap60.0} & vllm\_style & -23.3\% & [-23.3\%, -5.3\%] & ok \\
+\texttt{mix0.3\_load1.0\_dev32\_gap20.0} & vllm\_style & -23.4\% & [-23.5\%, -7.8\%] & ok \\
+\texttt{mix0.3\_load1.0\_dev32\_gap300.0} & vllm\_style & -23.5\% & [-23.6\%, -4.6\%] & ok \\
+\texttt{mix0.3\_load1.0\_dev32\_gap60.0} & vllm\_style & -23.5\% & [-23.6\%, -5.7\%] & ok \\
+\texttt{mix0.3\_load1.0\_dev8\_gap20.0} & vllm\_style & -22.4\% & [-22.9\%, -7.8\%] & ok \\
+\texttt{mix0.3\_load1.0\_dev8\_gap300.0} & vllm\_style & -22.4\% & [-22.9\%, -3.9\%] & ok \\
+\texttt{mix0.3\_load1.0\_dev8\_gap60.0} & vllm\_style & -22.4\% & [-22.9\%, -5.0\%] & ok \\
+\texttt{mix0.3\_load1.3\_dev16\_gap20.0} & niyama\_style & -10.5\% & [-10.8\%, +4.9\%] & ok \\
+\texttt{mix0.3\_load1.3\_dev16\_gap300.0} & niyama\_style & -11.0\% & [-11.3\%, +7.0\%] & ok \\
+\texttt{mix0.3\_load1.3\_dev16\_gap60.0} & niyama\_style & -10.8\% & [-11.0\%, +6.3\%] & ok \\
+\texttt{mix0.3\_load1.3\_dev32\_gap20.0} & niyama\_style & -10.5\% & [-10.7\%, +4.6\%] & ok \\
+\texttt{mix0.3\_load1.3\_dev32\_gap300.0} & niyama\_style & -11.1\% & [-11.2\%, +8.2\%] & ok \\
+\texttt{mix0.3\_load1.3\_dev32\_gap60.0} & niyama\_style & -10.8\% & [-10.9\%, +7.0\%] & ok \\
+\texttt{mix0.3\_load1.3\_dev8\_gap20.0} & niyama\_style & -9.9\% & [-10.5\%, +4.1\%] & ok \\
+\texttt{mix0.3\_load1.3\_dev8\_gap300.0} & niyama\_style & -10.4\% & [-11.0\%, +7.1\%] & ok \\
+\texttt{mix0.3\_load1.3\_dev8\_gap60.0} & niyama\_style & -10.1\% & [-10.8\%, +5.8\%] & ok \\
+\texttt{mix0.3\_load1.5\_dev16\_gap20.0} & niyama\_style & +2.3\% & [+1.8\%, +15.4\%] & ok \\
+\texttt{mix0.3\_load1.5\_dev16\_gap300.0} & niyama\_style & +1.7\% & [+1.1\%, +19.1\%] & ok \\
+\texttt{mix0.3\_load1.5\_dev16\_gap60.0} & niyama\_style & +2.0\% & [+1.4\%, +17.6\%] & ok \\
+\texttt{mix0.3\_load1.5\_dev32\_gap20.0} & niyama\_style & +2.0\% & [+2.0\%, +14.9\%] & ok \\
+\texttt{mix0.3\_load1.5\_dev32\_gap300.0} & niyama\_style & +1.4\% & [+1.3\%, +18.9\%] & ok \\
+\texttt{mix0.3\_load1.5\_dev32\_gap60.0} & niyama\_style & +1.7\% & [+1.6\%, +17.4\%] & ok \\
+\texttt{mix0.3\_load1.5\_dev8\_gap20.0} & niyama\_style & +3.2\% & [+2.1\%, +15.1\%] & ok \\
+\texttt{mix0.3\_load1.5\_dev8\_gap300.0} & niyama\_style & +2.6\% & [+1.5\%, +19.1\%] & ok \\
+\texttt{mix0.3\_load1.5\_dev8\_gap60.0} & niyama\_style & +2.9\% & [+1.7\%, +17.1\%] & ok \\
+\texttt{mix0.5\_load0.7\_dev16\_gap20.0} & fastserve\_mlfq & -16.0\% & [-16.3\%, -5.4\%] & ok \\
+\texttt{mix0.5\_load0.7\_dev16\_gap300.0} & fcfs & -9.5\% & [-9.8\%, +10.3\%] & ok \\
+\texttt{mix0.5\_load0.7\_dev16\_gap60.0} & vllm\_style & -12.5\% & [-12.9\%, +1.5\%] & ok \\
+\texttt{mix0.5\_load0.7\_dev32\_gap20.0} & fastserve\_mlfq & -16.1\% & [-16.3\%, -5.2\%] & ok \\
+\texttt{mix0.5\_load0.7\_dev32\_gap300.0} & fcfs & -9.4\% & [-9.4\%, +10.4\%] & ok \\
+\texttt{mix0.5\_load0.7\_dev32\_gap60.0} & fcfs & -12.5\% & [-12.5\%, +9.7\%] & ok \\
+\texttt{mix0.5\_load0.7\_dev8\_gap20.0} & vllm\_style & -10.0\% & [-15.9\%, -4.7\%] & ok \\
+\texttt{mix0.5\_load0.7\_dev8\_gap300.0} & fcfs & -9.8\% & [-9.8\%, +8.8\%] & ok \\
+\texttt{mix0.5\_load0.7\_dev8\_gap60.0} & fcfs & -12.8\% & [-12.8\%, +9.2\%] & ok \\
+\texttt{mix0.5\_load1.0\_dev16\_gap20.0} & vllm\_style & -22.8\% & [-23.0\%, -13.2\%] & ok \\
+\texttt{mix0.5\_load1.0\_dev16\_gap300.0} & vllm\_style & -23.3\% & [-23.5\%, -6.6\%] & ok \\
+\texttt{mix0.5\_load1.0\_dev16\_gap60.0} & vllm\_style & -23.2\% & [-23.3\%, -10.1\%] & ok \\
+\texttt{mix0.5\_load1.0\_dev32\_gap20.0} & vllm\_style & -23.0\% & [-23.1\%, -13.4\%] & ok \\
+\texttt{mix0.5\_load1.0\_dev32\_gap300.0} & vllm\_style & -23.6\% & [-23.7\%, -6.6\%] & ok \\
+\texttt{mix0.5\_load1.0\_dev32\_gap60.0} & vllm\_style & -23.4\% & [-23.5\%, -10.0\%] & ok \\
+\texttt{mix0.5\_load1.0\_dev8\_gap20.0} & vllm\_style & -22.6\% & [-22.6\%, -13.5\%] & ok \\
+\texttt{mix0.5\_load1.0\_dev8\_gap300.0} & vllm\_style & -23.0\% & [-23.0\%, -6.2\%] & ok \\
+\texttt{mix0.5\_load1.0\_dev8\_gap60.0} & vllm\_style & -22.9\% & [-22.9\%, -9.3\%] & ok \\
+\texttt{mix0.5\_load1.3\_dev16\_gap20.0} & niyama\_style & -10.1\% & [-10.4\%, -2.7\%] & ok \\
+\texttt{mix0.5\_load1.3\_dev16\_gap300.0} & niyama\_style & -11.4\% & [-11.6\%, +4.0\%] & ok \\
+\texttt{mix0.5\_load1.3\_dev16\_gap60.0} & niyama\_style & -10.8\% & [-11.1\%, +0.8\%] & ok \\
+\texttt{mix0.5\_load1.3\_dev32\_gap20.0} & niyama\_style & -10.2\% & [-10.4\%, -2.2\%] & ok \\
+\texttt{mix0.5\_load1.3\_dev32\_gap300.0} & niyama\_style & -11.5\% & [-11.7\%, +5.2\%] & ok \\
+\texttt{mix0.5\_load1.3\_dev32\_gap60.0} & niyama\_style & -11.0\% & [-11.1\%, +1.5\%] & ok \\
+\texttt{mix0.5\_load1.3\_dev8\_gap20.0} & niyama\_style & -9.5\% & [-10.0\%, -3.5\%] & ok \\
+\texttt{mix0.5\_load1.3\_dev8\_gap300.0} & niyama\_style & -10.8\% & [-11.4\%, +4.5\%] & ok \\
+\texttt{mix0.5\_load1.3\_dev8\_gap60.0} & niyama\_style & -10.3\% & [-10.8\%, +1.0\%] & ok \\
+\texttt{mix0.5\_load1.5\_dev16\_gap20.0} & niyama\_style & -1.5\% & [-2.2\%, +6.2\%] & FAIL (+501.7\%) \\
+\texttt{mix0.5\_load1.5\_dev16\_gap300.0} & niyama\_style & +1.1\% & [+0.6\%, +15.6\%] & ok \\
+\texttt{mix0.5\_load1.5\_dev16\_gap60.0} & niyama\_style & +1.9\% & [+1.2\%, +11.7\%] & ok \\
+\texttt{mix0.5\_load1.5\_dev32\_gap20.0} & niyama\_style & -1.4\% & [-1.9\%, +6.9\%] & FAIL (+468.6\%) \\
+\texttt{mix0.5\_load1.5\_dev32\_gap300.0} & niyama\_style & +0.8\% & [+0.7\%, +15.9\%] & ok \\
+\texttt{mix0.5\_load1.5\_dev32\_gap60.0} & niyama\_style & +1.5\% & [+1.4\%, +11.9\%] & ok \\
+\texttt{mix0.5\_load1.5\_dev8\_gap20.0} & niyama\_style & -1.7\% & [-1.9\%, +6.1\%] & FAIL (+526.5\%) \\
+\texttt{mix0.5\_load1.5\_dev8\_gap300.0} & niyama\_style & +1.5\% & [+1.0\%, +14.7\%] & ok \\
+\texttt{mix0.5\_load1.5\_dev8\_gap60.0} & niyama\_style & +2.2\% & [+1.7\%, +11.5\%] & ok \\
+\bottomrule
+\end{longtable}

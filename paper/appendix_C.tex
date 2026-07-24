@@ -1,0 +1,23 @@
+\section{The transfer table, expanded}
+
+1. Rationed guarantees. Origin: per-flow reservations failed at scale;
+   edge-complexity with core aggregates survived \citep{rfc2205,rfc2475}. Serving
+   gap: no per-task guarantee exists at any scale. Element: bounded reserved
+   subset K over aggregate classes (Section 4). Leak: K's right size is
+   workload-dependent and swept, not derived; the evaluation's tuner chose
+   the smallest offered (Section 7.5).
+2. Early probabilistic class-aware shedding. Origin: \citep{floyd1993red,rfc2597}.
+   Serving gap: deterministic cliffs (demotion at deadline, rejection at
+   ceiling). Element: p(H) ladder (Section 4.2). Departure, not transfer: the
+   signal is ledger commitments, a forward quantity networks lacked. Leak:
+   forecast quality bounds the signal's advantage, and the evaluation found
+   no advantage attributable above its noise floor (Sections 7.3, 7.5).
+3. Fate-independent supervision. Origin: out-of-band management \citep{ipmi_spec}.
+   Serving gap: oversight in the supervised pipeline. Element: management
+   plane with authority-and-availability independence (Section 4.3). Leak:
+   signal dependence is retained and conceded.
+4. Provenance-bound authority at the edge. Origin: ingress source validation
+   \citep{rfc2827,rfc3704}. Serving gap: content adjudicated downstream can
+   command capacity. Element: trust-keyed reservation eligibility (Section
+   4.4). Leak: provenance classes are coarser than network paths, and class
+   assignment itself must be trustworthy.

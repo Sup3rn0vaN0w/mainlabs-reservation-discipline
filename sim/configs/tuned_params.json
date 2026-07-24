@@ -1,0 +1,103 @@
+{
+  "concur_style": {
+    "mix_10": {
+      "additive_increase": 1.0,
+      "congestion_queue_threshold": 0.25,
+      "multiplicative_decrease": 0.5
+    },
+    "mix_30": {
+      "additive_increase": 1.0,
+      "congestion_queue_threshold": 0.25,
+      "multiplicative_decrease": 0.5
+    },
+    "mix_50": {
+      "additive_increase": 1.0,
+      "congestion_queue_threshold": 0.25,
+      "multiplicative_decrease": 0.5
+    }
+  },
+  "fastserve_mlfq": {
+    "mix_10": {
+      "num_levels": 4,
+      "preempt_mode": "swap",
+      "quantum_scale": 2.0
+    },
+    "mix_30": {
+      "num_levels": 4,
+      "preempt_mode": "swap",
+      "quantum_scale": 2.0
+    },
+    "mix_50": {
+      "num_levels": 4,
+      "preempt_mode": "swap",
+      "quantum_scale": 2.0
+    }
+  },
+  "fcfs": {
+    "mix_10": {},
+    "mix_30": {},
+    "mix_50": {}
+  },
+  "mars_style": {
+    "mix_10": {
+      "additive_increase": 2.0,
+      "multiplicative_decrease": 0.75,
+      "retain_threshold_tokens": 500
+    },
+    "mix_30": {
+      "additive_increase": 2.0,
+      "multiplicative_decrease": 0.75,
+      "retain_threshold_tokens": 500
+    },
+    "mix_50": {
+      "additive_increase": 2.0,
+      "multiplicative_decrease": 0.5,
+      "retain_threshold_tokens": 500
+    }
+  },
+  "niyama_style": {
+    "mix_10": {
+      "demote_after_fraction": 1.0,
+      "preempt_mode": "swap"
+    },
+    "mix_30": {
+      "demote_after_fraction": 1.0,
+      "preempt_mode": "swap"
+    },
+    "mix_50": {
+      "demote_after_fraction": 1.0,
+      "preempt_mode": "swap"
+    }
+  },
+  "reservation": {
+    "mix_10": {
+      "degradation.action": "shorten",
+      "pin_mode": "tiered",
+      "reserved_subset_fraction": 0.05
+    },
+    "mix_30": {
+      "degradation.action": "shorten",
+      "pin_mode": "tiered",
+      "reserved_subset_fraction": 0.05
+    },
+    "mix_50": {
+      "degradation.action": "shorten",
+      "pin_mode": "strict",
+      "reserved_subset_fraction": 0.05
+    }
+  },
+  "vllm_style": {
+    "mix_10": {
+      "max_batch_fraction": 1.0,
+      "preempt_mode": "swap"
+    },
+    "mix_30": {
+      "max_batch_fraction": 1.0,
+      "preempt_mode": "swap"
+    },
+    "mix_50": {
+      "max_batch_fraction": 1.0,
+      "preempt_mode": "swap"
+    }
+  }
+}

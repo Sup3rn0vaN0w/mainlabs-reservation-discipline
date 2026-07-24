@@ -1,0 +1,175 @@
+# Policy parameters (spec Section 4 baselines).
+# House style: hyphens only (D-026). Zero magic numbers in code -> every value here.
+#
+# These are the SG3 DEFAULTS. The spec Section 4 fairness protocol gives every
+# baseline a tuning budget equal to ours: a pre-registered grid over these
+# parameters, tuned per workload family on validation seeds and evaluated on
+# held-out seeds. That tuning harness is SG5 -- the values below are reasonable
+# starting points, NOT tuned values, and must not be reported as such.
+
+# --- OUR POLICY: the Reservation Discipline (D-049) ------------------------------
+reservation:
+  # K, the bounded reserved subset, as a fraction of total cluster concurrency.
+  # Ablation A5 sweeps this from 0.01 to 0.30 (spec Section 7).
+  reserved_subset_fraction: 0.15
+  k_anchor: "spec Section 7 ablation A5 - reserved-subset bound swept 1 to 30 percent of concurrency"
+
+  # Which classes may hold a reservation. The discipline exists for LONG-HORIZON
+  # flows -- the ones that accumulate KV, span tool-time, and lose the most to
+  # preemption. Short interactive turns neither need a guarantee nor benefit from
+  # one, and reserving them would burn the bounded subset on work that is over in a
+  # second. Everything not listed here is served best-effort out of the aggregate
+  # class (and is still metered by a cross-invocation budget).
+  eligible_classes: [agentic]
+  eligibility_anchor: "D-049 - the mechanism is for long-horizon agentic flows; interactive chat is the guardrail traffic it must not hurt (spec Section 3 TTFT guardrail)"
+
+  # A flow whose pin would exceed this fraction of a device's HBM is NOT reserved --
+  # it is too big to hold under guarantee (it would strand most of a GPU even while
+  # idle) and is almost always a runaway. It goes to the aggregate class, where its
+  # cross-invocation budget contains it (H3).
+  max_pin_hbm_fraction: 0.5
+  max_pin_anchor: "ASSUMPTION - a single reservation may not exceed half a device's HBM; beyond that the flow is contained by budget, not held by pin. Swept in sensitivity."
+
+  # Pin embodiment (ablation A4): strict = KV held in HBM across tool-time;
+  # tiered = KV spills to host across the gap with a guaranteed restore.
+  pin_mode: strict
+  pin_anchor: "spec Section 4 - 'strict-pin and tiered-pin (spill with guaranteed restore) embodiments'"
+
+  # The non-preemption guarantee. Ablation A2 sets this false (reservations become
+  # preemptible under pressure) to isolate what the guarantee is worth.
+  non_preemptible: true
+  guarantee_anchor: "spec Section 7 ablation A2 - minus non-preemption"
+
+  budget:
+    # Cross-invocation token budget. Ablation A1 sets enabled: false, which falls
+    # back to a per-request cap -- exactly what the baselines do, and the comparison
+    # H3 is built on.
+    enabled: true
+    a1_anchor: "spec Section 7 ablation A1 - full discipline minus cross-invocation budget (per-request caps instead)"
+    # Sized from the CLASS, not from the flow's own draw. A budget derived from what
+    # a flow actually intends to consume would give a runaway flow a runaway budget.
+    tokens_by_class:
+      interactive: 2000
+      agentic: 30000
+      reserved: 30000
+      aggregate: 30000
+      default: 30000
+    tokens_anchor: "ASSUMPTION - agentic mean total output is ~12k tokens (SG2 generators), so 30k is ~2.4x headroom for a compliant flow while a runaway (20x invocations, 5x tokens) blows through it. Swept in sensitivity."
+    per_request_cap_tokens: 4000
+    cap_anchor: "ASSUMPTION - the per-request cap used when the cross-invocation budget is ablated away (A1)"
+
+  degradation:
+    # Headroom-keyed PROBABILISTIC degradation. Ablation A3 swaps the key to
+    # queue_depth (the direct test of whether keying on headroom is what matters).
+    key: headroom
+    key_anchor: "spec Section 7 ablation A3 - minus headroom key (queue-depth-keyed drop instead)"
+    action: shorten
+    # Piecewise-linear: cluster headroom -> probability a flow is degraded.
+    # Pre-registered shape (spec Section 4: 'headroom curve piecewise-linear with
+    # pre-registered thresholds').
+    curve:
+      - {headroom: 0.00, probability: 1.0}
+      - {headroom: 0.05, probability: 0.8}
+      - {headroom: 0.15, probability: 0.3}
+      - {headroom: 0.30, probability: 0.0}
+    curve_anchor: "ASSUMPTION - thresholds pre-registered here before any results exist; swept in sensitivity (spec Section 7)"
+
+  # Best-effort (aggregate-class) work is preemptible; this is how a tiered pin's
+  # guaranteed restore is always honorable.
+  besteffort_preempt_mode: recompute
+  seed: 777
+
+# --- degradation catalog: what an action DOES and what it COSTS ------------------
+# The engine applies these; the policy only names the action. Quality costs are an
+# ASSUMPTION drawn from the cascade/tiering literature (spec Section 10) -- including
+# the lab's own feasibility-condition paper -- and are swept in sensitivity.
+degradation_actions:
+  shorten:
+    token_scale: 0.5      # halve the output of the flow's not-yet-started steps
+    quality_cost: 0.25    # forfeit 25 percent of the flow's served value
+  truncate:
+    token_scale: 0.25
+    quality_cost: 0.50
+
+# --- baseline 1: vLLM-style priority + preemption (spec Section 4) --------------
+vllm_style:
+  # The two spec Section 4 variants. Both are engine mechanics; the policy just
+  # tags its Preempt action with one.
+  #   recompute - KV discarded, accumulated context re-prefilled on resume
+  #   swap      - KV copied to host and back at the modeled interconnect bandwidth
+  preempt_mode: recompute
+  mode_anchor: "spec Section 4 - 'recompute-on-resume and swap-to-host variants'; both are evaluated"
+  # Lower number = higher priority. Latency-sensitive interactive traffic outranks
+  # long-horizon agentic flows; only a strictly-higher-priority invocation may
+  # preempt, so preemption cannot cycle.
+  class_priority:
+    interactive: 0
+    agentic: 1
+  priority_anchor: "vLLM (Kwon et al., SOSP 2023) schedules by priority and preempts under pressure; the interactive-over-agentic ordering is the natural mapping of that to this workload"
+
+# --- baseline 2: Niyama-style SLO classes, deterministic demotion (spec Section 4) --
+niyama_style:
+  # Per-class latency SLO. A flow that burns through its budget is demoted -- at a
+  # fixed threshold, deterministically. That cliff is the deliberate contrast to our
+  # probabilistic headroom-keyed degradation (ablation A3 / hypothesis H2).
+  class_slo_s:
+    interactive: 10.0
+    agentic: 600.0
+  slo_anchor: "ASSUMPTION - interactive chat is seconds-scale, a long-horizon agentic flow minutes-scale. Tuned at SG5; swept in sensitivity."
+  class_priority:
+    interactive: 0
+    agentic: 1
+  demote_after_fraction: 0.75
+  demote_anchor: "ASSUMPTION - demote once a flow has burned 75 percent of its SLO budget. This is the tuned knob."
+  num_demotions: 2
+  preempt_mode: recompute
+
+# --- baseline 3: CONCUR-style AIMD admission + pause/resume (spec Section 4) --------
+concur_style:
+  # Concurrency window, controlled AIMD. Admission is gated on it: work outside the
+  # window is REFUSED, not queued. Overshoot is PAUSED (state-preserving swap), never
+  # discarded -- which is what pause/resume means and why the engine always prices a
+  # CONCUR preemption as a swap.
+  initial_window_fraction: 0.5
+  additive_increase: 1.0
+  multiplicative_decrease: 0.5
+  congestion_queue_threshold: 0.5
+  aimd_anchor: "CONCUR - AIMD admission with pause/resume. AI=1 / MD=0.5 is the canonical TCP-style pairing; the congestion threshold is an ASSUMPTION. All four are tuned at SG5."
+
+# --- baseline (Amendment 1): MARS-style AIMD + MLFQ + cost-benefit KV retention ---
+mars_style:
+  # MLFQ half (as fastserve).
+  num_levels: 4
+  quantum_tokens: [50, 200, 800, 3200]
+  quantum_scale: 1.0
+  # AIMD admission half (as concur). The window also bounds the backlog, so MARS
+  # does not inherit MLFQ's unbounded-queue cost under overload.
+  initial_window_fraction: 1.0
+  additive_increase: 1.0
+  multiplicative_decrease: 0.5
+  congestion_queue_threshold: 0.5
+  # The window may oversubscribe the decode slots up to this multiple; without it
+  # the MLFQ half never engages and MARS collapses to CONCUR (pure AIMD admission).
+  max_window_fraction: 3.0
+  # Cost-benefit KV retention: above this materialized-context size, swap (retain
+  # the KV) beats recompute; below it, recompute is cheaper than a host round-trip.
+  retain_threshold_tokens: 1000
+  anchor: "MARS (arXiv 2604.26963) - AIMD admission + MLFQ priority + opportunistic cost-benefit KV retention. Component defaults follow concur/fastserve; the retention threshold is MARS-specific. All tuned at SG5 under the equal-budget harness."
+
+# --- baseline 4: FastServe-style MLFQ (spec Section 4) ---------------------------
+fastserve_mlfq:
+  # Multi-level feedback queue: every invocation enters at level 0 and is demoted a
+  # level each time it consumes its current level's token quantum. The scheduler
+  # always prefers lower levels, preempting a higher-level (lower-priority)
+  # invocation when an outranking one is waiting and no slot is free.
+  num_levels: 4
+  quantum_tokens: [50, 200, 800, 3200]
+  quantum_anchor: "ASSUMPTION - geometric quanta are the standard MLFQ construction; FastServe (Wu et al., 2023) does not fix these values. Tuned at SG5."
+  # FastServe's contribution includes proactive KV-cache swapping to make
+  # preemption cheap, so SWAP is the faithful default here.
+  preempt_mode: swap
+  mode_anchor: "FastServe (Wu et al., 2023) - proactive KV cache management / swapping to bound preemption cost"
+  # Demotion is driven by accumulated decode service, which only changes as tokens
+  # are generated, so the policy needs a periodic scheduling opportunity.
+  tick_interval_s: 0.5
+  tick_anchor: "ASSUMPTION - MLFQ re-evaluation period; must be short relative to the smallest quantum's service time. Tuned at SG5."

@@ -1,0 +1,34 @@
+# PILOT GRID (spec Section 7 / brief SG6).
+# House style: hyphens only (D-026).
+#
+# A small subset of the main grid, run and reviewed on the strategy surface BEFORE
+# the full grid is authorized (brief SG6). It exists to answer three questions:
+#   1. Does the core-region signal from SG5 hold across cells, with CIs?
+#   2. What is the per-cell wall-clock runtime -> project the full grid, decide
+#      local-overnight vs cloud CPU for SG7 (brief SG6), and check the 24-hour guard.
+#   3. Do the new secondary metrics (tails, TTFT guardrail, served value) behave?
+#
+# Same horizon as the tuning cell so the runtime projection is honest. Policies use
+# their TUNED parameters per mix family (configs/tuned_params.json).
+
+# Amendment 2: horizon 1500s (was 300s). The pilot is SUPERSEDED by the final
+# grid; kept runnable at a non-censoring horizon only (docs/H3_ZERO_CHECK.md).
+policies: [fcfs, vllm_style, niyama_style, concur_style, fastserve_mlfq, mars_style, reservation]
+seeds: [1, 2, 3]
+tuned_params: configs/tuned_params.json
+
+cell:
+  horizon_s: 1500.0
+  warmup_s: 150.0
+  tick_s: 0.5
+  slots: 16
+  hbm_gib: 80.0
+  # Measured: FCFS floor saturates at ~32 flows/s on 4 devices x 16 slots = 8/s/device.
+  capacity_per_device: 8.0
+  capacity_anchor: "measured at SG5 (floor saturation); re-measure if devices or service constants change"
+
+axes:
+  mix: [0.10, 0.30, 0.50]        # spec Section 5 mix sweep, all three points
+  load: [0.7, 1.0, 1.3]          # spec Section 7 core region
+  num_devices: [4]               # pilot fixes cluster size; the main grid sweeps 8-64
+  gap_median_s: [20]             # spec Section 5 default; the main grid sweeps this

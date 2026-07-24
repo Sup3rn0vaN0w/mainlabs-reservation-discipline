@@ -1,0 +1,3 @@
+{"num_devices": 8, "seconds": 1121.4488325119019, "horizon_s": 1500.0, "warmup_s": 150.0}
+{"num_devices": 16, "seconds": 5187.119347572327, "horizon_s": 1500.0, "warmup_s": 150.0}
+{"num_devices": 32, "seconds": 21830.603801250458, "horizon_s": 1500.0, "warmup_s": 150.0}

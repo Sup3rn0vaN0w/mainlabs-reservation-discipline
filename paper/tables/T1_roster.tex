@@ -1,0 +1,27 @@
+\begin{tabular}{llp{3.1in}}
+\toprule
+policy & workload family & tuned parameters \\
+\midrule
+concur\_style & mix\_10 & \texttt{additive\_increase=1.0, congestion\_queue\_threshold=0.25, multiplicative\_decrease=0.5} \\
+concur\_style & mix\_30 & \texttt{additive\_increase=1.0, congestion\_queue\_threshold=0.25, multiplicative\_decrease=0.5} \\
+concur\_style & mix\_50 & \texttt{additive\_increase=1.0, congestion\_queue\_threshold=0.25, multiplicative\_decrease=0.5} \\
+fastserve\_mlfq & mix\_10 & \texttt{num\_levels=4, preempt\_mode=swap, quantum\_scale=2.0} \\
+fastserve\_mlfq & mix\_30 & \texttt{num\_levels=4, preempt\_mode=swap, quantum\_scale=2.0} \\
+fastserve\_mlfq & mix\_50 & \texttt{num\_levels=4, preempt\_mode=swap, quantum\_scale=2.0} \\
+fcfs & mix\_10 & \texttt{(no parameters)} \\
+fcfs & mix\_30 & \texttt{(no parameters)} \\
+fcfs & mix\_50 & \texttt{(no parameters)} \\
+mars\_style & mix\_10 & \texttt{additive\_increase=2.0, multiplicative\_decrease=0.75, retain\_threshold\_tokens=500} \\
+mars\_style & mix\_30 & \texttt{additive\_increase=2.0, multiplicative\_decrease=0.75, retain\_threshold\_tokens=500} \\
+mars\_style & mix\_50 & \texttt{additive\_increase=2.0, multiplicative\_decrease=0.5, retain\_threshold\_tokens=500} \\
+niyama\_style & mix\_10 & \texttt{demote\_after\_fraction=1.0, preempt\_mode=swap} \\
+niyama\_style & mix\_30 & \texttt{demote\_after\_fraction=1.0, preempt\_mode=swap} \\
+niyama\_style & mix\_50 & \texttt{demote\_after\_fraction=1.0, preempt\_mode=swap} \\
+reservation & mix\_10 & \texttt{degradation.action=shorten, pin\_mode=tiered, reserved\_subset\_fraction=0.05} \\
+reservation & mix\_30 & \texttt{degradation.action=shorten, pin\_mode=tiered, reserved\_subset\_fraction=0.05} \\
+reservation & mix\_50 & \texttt{degradation.action=shorten, pin\_mode=strict, reserved\_subset\_fraction=0.05} \\
+vllm\_style & mix\_10 & \texttt{max\_batch\_fraction=1.0, preempt\_mode=swap} \\
+vllm\_style & mix\_30 & \texttt{max\_batch\_fraction=1.0, preempt\_mode=swap} \\
+vllm\_style & mix\_50 & \texttt{max\_batch\_fraction=1.0, preempt\_mode=swap} \\
+\bottomrule
+\end{tabular}

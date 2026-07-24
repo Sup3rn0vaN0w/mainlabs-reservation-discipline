@@ -1,0 +1,15 @@
+# ABLATION SWEEP A1-A5 (spec Section 7). Runs the tuned reservation discipline with
+# one element removed at a time. Dual-use: paper per-element table + prosecution
+# evidence. House style: hyphens only (D-026). Horizon 1500s (H3_ZERO_CHECK.md).
+seeds: [1, 2, 3]
+cell:
+  horizon_s: 1500.0
+  warmup_s: 150.0
+  tick_s: 0.5
+  slots: 16
+  hbm_gib: 80.0
+  num_devices: 4
+  capacity_per_device: 8.0
+axes:
+  mix: [0.10, 0.30, 0.50]
+  load: [1.0]

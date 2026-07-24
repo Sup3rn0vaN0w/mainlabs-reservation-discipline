@@ -1,0 +1,36 @@
+# ABLATION SWEEP A1-A5, CONTENDED CELL (follow-up authorized 2026-07-21).
+# House style: hyphens only (D-026).
+#
+# WHY THIS EXISTS. The original ablation cell (configs/ablations.yaml: 4 devices,
+# 16 slots, load 1.0) leaves reserved capacity 94-95 percent IDLE, so the budget
+# (A1), the non-preemption guarantee (A2) and the pin embodiment (A4) never engage.
+# Their measured effect there is 0.0 percent to four significant figures across every
+# mix and seed -- which says the elements were not exercised, NOT that they do
+# nothing. See docs/ABLATION_READOUT.md section 1.
+#
+# This cell is built to make them bind:
+#   slots 64        -- peak decode and KV DO bind here and HBM peaks at ~99.9 percent
+#                      (docs/SENSITIVITY_HARNESS_CHECK.md PART B.2), so pin mode (A4)
+#                      and spill behaviour have something to decide.
+#   load 1.3        -- sustained overload creates the queueing pressure that makes a
+#                      scheduler want to preempt, which is what A2 protects against.
+#   gap_median 20s  -- the SHORT end of the main grid's gap axis. Reserved flows
+#                      return quickly instead of sitting in tool-time, which is the
+#                      direct cause of the 95 percent reserved-idle in the original
+#                      cell. This is the single most important difference.
+#
+# The original cell is NOT replaced. Both are reported: the contrast between an
+# uncontended and a contended cell is itself the finding.
+seeds: [1, 2, 3]
+cell:
+  horizon_s: 1500.0
+  warmup_s: 150.0
+  tick_s: 0.5
+  slots: 64
+  hbm_gib: 80.0
+  num_devices: 4
+  capacity_per_device: 8.0
+  gap_median_s: 20.0
+axes:
+  mix: [0.10, 0.30, 0.50]
+  load: [1.3]

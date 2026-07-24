@@ -1,0 +1,32 @@
+# SG1 sanity configuration: utilization-vs-offered-load curve.
+# House style: hyphens only (D-026).
+#
+# Same M/M/1-degenerate single server as sanity_mm1.yaml, swept across offered
+# load. For an M/M/1 server, device utilization equals the offered load rho.
+# The check asserts: utilization is monotincreasing in offered load, stays below
+# 1, and tracks rho within tolerance.
+#
+# Offered load rho = arrival_rate * E[S], with E[S] = mean_output_tokens /
+# single_stream_tokens_per_s = 60/100 = 0.6 s. So arrival_rate = rho / 0.6.
+
+seed: 20260713
+
+cluster:
+  num_devices: 1
+  device:
+    hbm_capacity_gib: 80.0
+    max_concurrent_decodes: 1
+
+workload:
+  kind: mm1_degenerate
+  mean_output_tokens: 60.0        # E[S] = 0.6 s
+  prefill_tokens: 0
+
+sweep:
+  # Offered loads to evaluate. arrival_rate_per_s is derived per point as
+  # rho / E[S] by the sanity script.
+  offered_loads: [0.2, 0.4, 0.6, 0.8]
+
+run:
+  horizon_s: 20000.0
+  warmup_s: 1000.0

@@ -1,0 +1,49 @@
+\section{Simulator}
+
+The evaluation runs on a discrete-event simulator at invocation granularity
+with token-rate service models: cluster of devices with per-device memory,
+batch-size-dependent decode throughput, prefill cost, and modeled host
+spill; validated against closed form (Little's law holds to 0.00 percent on
+a degenerate configuration, utilization tracks offered load within 1
+percent, and these sanity numbers remained bit-identical through every
+subsequent engine change).
+
+Two design rules carry the comparison's fairness. First, strict
+policy/engine separation: the engine owns all physics, what preemption
+costs in both recompute and swap variants, how pinning constrains paging,
+how budgets are metered at decode, and the physics are identical for every
+policy; policies are pure decision modules behind one interface, and the
+reservation ledger's invariants (no over-commitment of compute, memory, or
+budget under any event interleaving; no capacity condition in any release
+path) are engine-enforced hard test failures. Second, paired comparison:
+within a cell, every policy runs against byte-identical workload
+realizations from shared seeds, verified by test, so cross-policy deltas
+are not workload noise.
+
+Service-model constants (single-stream decode rate, peak decode, cache
+bytes per token, spill bandwidth) are literature-anchored and marked low
+confidence; Section 7.6 reports their measured sensitivity, including which
+constants bind in which regimes and why. No hardware phase was run: the
+program gated hardware confirmation on this evaluation supporting the
+mechanism, and the gate closed.
+
+Integrity record. We report the evaluation's own caught defects, because
+for a negative result the reader's question is whether the loss is real.
+Three defects were caught by the engine's invariants during construction,
+each fixed and regression-tested, and one of them was flattering the
+mechanism: an O(n squared) scheduling path under overload was silently
+depressing the work-conserving baselines, the exact policies that win the
+final comparison; left unfixed, the mechanism's loss would have looked
+smaller for a reason that had nothing to do with scheduling. A second
+defect would have violated the tiered-pin restore guarantee; a third let
+oversized flows pin most of a device. During the final campaign, two
+further interventions occurred, both disclosed in the readout: 189
+manifests from a pre-amendment pilot were found in the verdict path's
+evidence directory and quarantined behind a new input-domain guard (the
+contamination, censored-horizon cells at an excluded cluster size, biased
+against the mechanism; it was removed on domain logic, not direction), and
+two baseline runs that reached congestion collapse at the wall-clock cap
+were excluded with the selection effect stated, a bias that favors the
+affected baselines and therefore runs against the mechanism the evaluation
+killed. The full test suite (141 tests), the quarantine directory, and the
+collapsed-run manifests are released.

@@ -1,0 +1,1 @@
+{"abandonments": 64, "goodput_per_gpu_hour": 28433.666666666668, "load": 1.0, "mix": 0.1, "reserved_idle_fraction": 0.9330148908626976, "seed": 1, "served_value_fraction": 0.6529070479456249, "variant": "A4_tiered"}

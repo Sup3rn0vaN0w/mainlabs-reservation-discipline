@@ -1,0 +1,58 @@
+# Service-model constants for the T-055 simulator.
+#
+# EVERY value here is LOW CONFIDENCE and is a PLACEHOLDER anchored to published
+# serving-systems figures. Phase 2 (spec Section 9) calibrates these against a
+# small real vLLM run and reports the calibration error. Until then the simulator
+# carries the stated fidelity caveat (spec Section 6, Section 10).
+#
+# House style: hyphens only (D-026). Zero magic numbers in code -> every number
+# lives here with its anchor. `anchor:` names the published source; `confidence:`
+# is LOW for all service-model physics until Phase 2 calibration.
+#
+# NOTE (SG1 scope): the SG1 sanity checks (Little's law on an M/M/1-degenerate
+# configuration; utilization-vs-offered-load) do not depend on the numeric values
+# below -- they are dimensionless consistency checks. These constants exist so the
+# engine is parameterized from config, never from literals in code.
+
+decode:
+  # Aggregate device decode throughput is modeled as
+  #   throughput(b) = min(b * single_stream_tokens_per_s, peak_decode_tokens_per_s)
+  # i.e. per-request rate is constant at low batch (memory-bandwidth headroom)
+  # and the device saturates at a peak aggregate rate. Per-request decode rate is
+  # therefore throughput(b) / b. This is the standard first-order continuous-
+  # batching decode model; chunked-prefill/decode compute contention is a Phase-2
+  # fidelity item (spec Section 6).
+  single_stream_tokens_per_s: 100.0   # per-request decode rate at batch size 1
+  anchor: "vLLM (Kwon et al., SOSP 2023) and Splitwise (Patel et al., ISCA 2024) report single-stream decode in the ~50-120 tok/s range for ~13B-class models on A100/H100; 100 is a round mid-range placeholder"
+  peak_decode_tokens_per_s: 4000.0    # device aggregate decode saturation
+  peak_anchor: "aggregate continuous-batching decode throughput on one A100/H100 for a ~13B model is O(1000-5000) tok/s in vLLM/Splitwise measurements; 4000 is a round placeholder"
+  confidence: LOW
+
+prefill:
+  # Prefill time for an invocation = prefill_tokens / prefill_tokens_per_s.
+  # Prefill is modeled as a per-invocation head-of-service latency before the
+  # invocation enters the decode processor-sharing set. Prefill/decode compute
+  # contention and chunked prefill are Phase-2 fidelity items.
+  prefill_tokens_per_s: 12000.0
+  anchor: "prefill is compute-bound and roughly an order of magnitude faster per token than decode; vLLM/Splitwise prefill throughput is O(10k) tok/s for ~13B on A100/H100; 12000 placeholder"
+  confidence: LOW
+
+kv_cache:
+  # KV-cache HBM footprint per token of context. For SG1 an invocation reserves
+  # footprint for its maximum context (prefill_tokens + output_tokens) at schedule
+  # time (static, conservative). Dynamic mid-decode KV growth and paging under
+  # pressure are exercised at SG3/SG4.
+  mib_per_token: 0.50
+  anchor: "PagedAttention (vLLM, Kwon et al., SOSP 2023): KV per token is O(0.1-1 MiB/token) for ~13B-class models depending on layers/heads/precision; 0.5 MiB/token placeholder"
+  confidence: LOW
+
+host_spill:
+  # When device HBM cannot hold a request's KV, it spills to host memory over the
+  # host interconnect. Modeled as a fixed handshake latency plus a bandwidth term.
+  # Not triggered by the SG1 sanity configs (they provision ample HBM); the model
+  # is present for SG3/SG4 paging mechanics.
+  bandwidth_gib_per_s: 24.0
+  bandwidth_anchor: "PCIe Gen4 x16 is ~32 GiB/s theoretical, ~24 GiB/s effective; NVLink-C2C higher. 24 placeholder for a PCIe-attached host-spill path"
+  latency_s: 0.001
+  latency_anchor: "fixed per-spill handshake/overhead; 1 ms placeholder"
+  confidence: LOW

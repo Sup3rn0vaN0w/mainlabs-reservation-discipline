@@ -1,0 +1,18 @@
+% =====================================================================
+% main_tmlr.tex -- TMLR SUBMISSION target (anonymous, double-blind).
+% tmlr.sty (no option) prints "Anonymous authors" and the review running
+% head and suppresses the \author block. \anontrue switches the artifact
+% URL to the anonymized mirror. Four-pass: pdflatex, bibtex, pdflatex x2.
+% =====================================================================
+\documentclass[10pt]{article}
+
+\newif\ifanon
+\anontrue
+
+\usepackage{tmlr}
+
+\input{preamble_shared}
+
+\begin{document}
+\input{body_shared}
+\end{document}

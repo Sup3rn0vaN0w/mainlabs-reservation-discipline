@@ -1,0 +1,19 @@
+{
+  "horizon_s": 1500.0,
+  "warmup_s": 150.0,
+  "rows": [
+    {
+      "num_devices": 8,
+      "seconds": 1121.4488325119019
+    },
+    {
+      "num_devices": 16,
+      "seconds": 5187.119347572327
+    },
+    {
+      "num_devices": 32,
+      "seconds": 21830.603801250458
+    }
+  ],
+  "provenance": "measured, c7i.2xlarge on-demand, us-east-1, 2026-07-19/20"
+}

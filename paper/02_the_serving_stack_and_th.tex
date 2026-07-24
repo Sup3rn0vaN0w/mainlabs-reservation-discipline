@@ -1,0 +1,56 @@
+\section{The serving stack and the workload it now carries}
+
+The reorganization of the serving stack is not a proposal anyone needs to
+make; it is happening. Mozilla.ai's articulation of an LLM control plane
+names the three-plane split explicitly and maps it onto LLM
+infrastructure \citep{mozilla2026}; NVIDIA's Dynamo separates scheduling and
+placement from execution in a disaggregated runtime \citep{dynamo2025}; AIBrix
+builds control-plane machinery as a first-class system layer
+\citep{aibrix2025}; and external control planes with explicit admission control
+are appearing for agentic workloads specifically \citep{mars2026}. What the new
+layer provides, across these systems and the commercial gateways around
+them, is a consistent portfolio: authentication and routing, rate limits,
+per-request and per-session budget caps \citep{litellm2026,truefoundry2026},
+priority scheduling with preemption \citep{vllm2023}, and reserved throughput
+sold at the account level \citep{bedrock_ptu,azure_ptu}. Each mechanism is
+useful. Together they constitute a control plane built on one implicit
+assumption: that the unit of work is a request, that any request may be
+delayed, preempted, migrated, or dropped under pressure, and that
+fairness and efficiency are properties of request streams.
+
+The workload violates the assumption. A flow, an agent executing a task,
+a multi-step job with a declared objective, has five properties that
+defeat specific mechanisms of the request-oriented portfolio. It spans
+tens of invocations whose count is unknown at start, so per-invocation
+latency optimization compounds queueing delay across the flow and tail
+completion is governed by the worst episode. It accumulates key-value
+cache and tool state that are its progress, so preemption with
+recompute-on-resume or swap-and-requeue does not delay the work but
+destroys it. It idles between invocations for seconds to minutes while
+tools and humans respond, and under request accounting an idle flow's
+resources are fair game, so resumption becomes randomized restart; the
+idle gap is also, we note at the outset, the strongest argument against
+the discipline this paper proposes and prices. Its value is concentrated
+at completion, so a flow abandoned at ninety-five percent of its
+invocations delivers nothing at ninety-five percent of its cost,
+inverting the economics that make preemption cheap for divisible work.
+And its consumption is unbounded by default, an agent in a defective or
+adversarial loop drawing tokens across invocations that per-request caps
+structurally cannot see, while session-level budget ceilings
+\citep{litellm2026,truefoundry2026} answer the accumulation with rejection,
+converting the entire prior spend into waste at the moment of
+enforcement.
+
+The portfolio, taken together, provides caps that see flows but cannot
+feed them, schedulers that feed work but cannot promise it anything, and
+account-level floors that promise capacity but cannot see flows. Nothing
+guarantees that a specific task, admitted deliberately, will finish or be
+deliberately stopped; and because no mechanism binds authority to a
+specific flow, the portfolio offers no enforcement point for governing
+one. The missing object is a completion-oriented resource contract:
+resources sufficient to finish, granted at admission and not silently
+withdrawn; a bound enforced as part of the same contract rather than as
+an ambush at a ceiling; and a designated authority, outside the flow,
+entitled to stop it. Section 4 specifies a discipline providing exactly
+these clauses. Whether the contract is worth its price is the question
+the rest of the paper answers.

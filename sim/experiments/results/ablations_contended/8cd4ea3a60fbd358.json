@@ -1,0 +1,1 @@
+{"abandonments": 122, "cell": {"capacity_per_device": 8.0, "gap_median_s": 20.0, "hbm_gib": 80.0, "horizon_s": 1500.0, "num_devices": 4, "slots": 64, "warmup_s": 150.0}, "goodput_per_gpu_hour": 38231.333333333336, "load": 1.3, "mix": 0.1, "reserved_idle_fraction": 0.8899696230023206, "seed": 3, "served_value_fraction": 0.9964033776974667, "variant": "A3_queue_depth"}

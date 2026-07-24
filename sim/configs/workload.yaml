@@ -1,0 +1,71 @@
+# Workload model parameters (spec Section 5).
+# House style: hyphens only (D-026). Zero magic numbers in code -> every value here.
+#
+# Anchoring policy (spec Section 5): parameters given explicitly in the frozen spec
+# are marked `anchor: spec Section 5`. Parameters the spec leaves open are marked
+# `anchor: ASSUMPTION` and are swept in sensitivity (spec Section 2 / Section 7);
+# they are NOT presented as measured facts.
+#
+# Lognormals are parameterized by (median, p95) and converted to (mu, sigma) in
+# distributions.py. `median` and `p95` are in the natural unit of the quantity.
+
+# --- traffic classes (spec Section 5 MIX: interactive chat vs agentic flows) ----
+classes:
+  interactive:
+    # Short, latency-sensitive chat turns: one invocation, no tool-time.
+    invocations_per_flow: {median: 1, p95: 1}       # single-turn
+    inv_anchor: "ASSUMPTION - interactive traffic modeled as single-turn chat"
+    input_tokens: {median: 40, p95: 300}            # the user prompt
+    output_tokens: {median: 120, p95: 600}          # the reply
+    token_anchor: "ASSUMPTION - short-form chat token counts; swept in sensitivity"
+    gap_s: {median: 0, p95: 0}                       # no inter-invocation tool-time
+    value_weight: 1.0
+    value_anchor: "ASSUMPTION - baseline weight; value vector swept (spec Section 2)"
+  agentic:
+    # Long-horizon agentic flows: many invocations separated by tool-time.
+    invocations_per_flow: {median: 12, p95: 80}     # spec Section 5 (given)
+    inv_anchor: "spec Section 5 - invocations per flow lognormal median 12 p95 80"
+    input_tokens: {median: 100, p95: 1200}          # tool results / observations fed back
+    input_anchor: "ASSUMPTION - per-step injected context (tool output); swept"
+    output_tokens: {median: 200, p95: 2000}         # per-step model output
+    output_anchor: "ASSUMPTION - per-invocation output lognormal; spec fixes the family, not the values; swept"
+    gap_s: {median: 20, p95: 300}                    # spec Section 5 (given): tool-time
+    gap_anchor: "spec Section 5 - inter-invocation gap lognormal median 20s p95 5min; THE dominant sweep axis (stranding)"
+    value_weight: 3.0
+    value_anchor: "ASSUMPTION - long agentic flows weighted above single chat turns; value vector swept (spec Section 2)"
+
+# --- traffic mix (spec Section 5: 90/10, 70/30, 50/50 by TOKEN VOLUME) ----------
+mix:
+  # Target fraction of TOTAL TOKEN VOLUME contributed by agentic flows. The three
+  # spec points are interactive/agentic 90/10, 70/30, 50/50 -> agentic shares
+  # 0.10, 0.30, 0.50. Per-flow class is assigned so the achieved token-volume
+  # share matches this target given each class's mean tokens per flow.
+  agentic_token_share: 0.30
+  anchor: "spec Section 5 - mix sweep {0.10, 0.30, 0.50} agentic by token volume"
+
+# --- arrival process (spec Section 5: Poisson base + diurnal + bursts) -----------
+arrivals:
+  base_rate_per_s: 5.0
+  base_anchor: "ASSUMPTION - default base arrival rate; the grid calibrates rate to a target offered load per cell (spec Section 7)"
+  diurnal:
+    period_s: 86400          # 24h
+    amplitude: 0.4           # +/- 40 percent sinusoidal modulation (must be < 1)
+    phase_s: 0
+    anchor: "spec Section 5 - diurnal modulation (given); amplitude/phase ASSUMPTION"
+  burst:
+    rate_multiplier: 3.0     # arrival rate during a burst episode
+    mean_duration_s: 120     # exponential episode length
+    episodes_per_day: 6
+    anchor: "spec Section 5 - burst episodes (given); magnitude/frequency ASSUMPTION"
+
+# --- adversarial runaway family (spec Section 5 / H3) ---------------------------
+adversarial:
+  # Fraction of AGENTIC arrivals that are runaway. Spec sweep: 0, 0.01, 0.05, 0.10.
+  runaway_fraction_of_agentic: 0.0
+  anchor: "spec Section 5 - runaway injection sweep {0, 0.01, 0.05, 0.10} of agentic arrivals"
+  runaway:
+    # Runaway = loops with unbounded invocation counts and heavy token draw.
+    invocation_multiplier: 20.0    # ~20x the normal agentic invocation count
+    output_token_multiplier: 5.0   # heavy per-step token draw
+    gap_shrink: 0.1                # tight loop: gaps shrink to 10 percent
+    anchor: "ASSUMPTION - runaway amplification factors; the spec fixes the qualitative behavior (unbounded loop, heavy draw), not the magnitudes"

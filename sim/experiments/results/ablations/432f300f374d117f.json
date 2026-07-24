@@ -1,0 +1,1 @@
+{"abandonments": 75, "goodput_per_gpu_hour": 32227.0, "load": 1.0, "mix": 0.1, "reserved_idle_fraction": 0.9263216424632766, "seed": 1, "served_value_fraction": 0.7400113281489192, "variant": "A3_queue_depth"}

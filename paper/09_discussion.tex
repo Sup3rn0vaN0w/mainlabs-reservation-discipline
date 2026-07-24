@@ -1,0 +1,70 @@
+\section{Discussion}
+
+The ledger, in one place. Completion guarantees cost a median 10.3
+percent of goodput per provisioned GPU-hour in the tested region, and
+the cost is U-shaped in load: deepest, 22 to 24 percent, exactly at
+nominal provisioning, recovering toward saturation, inverting past it.
+They buy three measured things: interactive tail-latency isolation of 63 to 97 percent across most of the region, with one identified inversion
+corner; containment of adversarial runaways to a 3.1-point degradation
+where the strongest request-oriented schedulers starve compliant agentic
+work to zero; and a regime boundary at 1.5x load beyond which the
+guarantee begins to pay for itself. The efficiency thesis, that the
+purchases outweigh the cost on a single hardware-normalized metric, is
+dead on its own pre-registered terms. What survives is a price list.
+
+The verdict closes each of Section 3's transfers on its own terms.
+Lesson one's economics largely do not survive the crossing: the field
+that invented per-flow guarantees abandoned them substantially for their
+cost, and this evaluation measured the same abandonment logic operating
+at the serving layer, with the added force that the tuner, offered a
+range of reserved-subset sizes under an honest metric, chose the
+smallest in every workload family at every horizon. The mechanism,
+optimized truthfully, minimizes itself; the duty-cycle analysis of
+Section 7.5 says why, and says it is structural rather than
+configurational. Lesson two's shape survives but its transferred signal
+does not: degradation should still act early, probabilistically, and per
+class, but keying it to committed headroom rather than queue state,
+this design's one deliberate departure from the RED lineage, delivered
+no measurable advantage at the system level (Section 7.3) and no
+attributable one at the component level (Section 7.5), and the forward
+signal this paper argued the serving layer gets for free is, on this
+evidence, worth nothing that queue depth does not already provide.
+Lessons three and four cross intact, because they were never economic
+claims: fate-independent supervision and provenance-bound admission are
+authority structures, their cost is engineering rather than goodput, and
+the one property of theirs this evaluation could measure, the budget's
+containment of adversarial runaways, held exactly as specified while
+the strongest priority schedulers starved every compliant flow they
+were nominally serving. The contract-versus-priority distinction,
+argued in Section 4.2 as a matter of kind, appears in Section 7.4 as a
+matter of record.
+
+The honest reading of the mechanism, then, is not ``efficiency technique
+that failed'' but ``insurance product whose premium is now known.'' Fleets
+that are well-provisioned and run nominal load sit at the bottom of the
+U and should not reserve: the premium is maximal there, and the
+starvation pathology, while real, is avoidable with cheaper instruments
+at low agentic share. The case for reservations concentrates where the
+purchases concentrate: fleets that price interactive tail latency highly
+and currently buy isolation through overprovisioning; fleets with
+adversarial or untrusted agentic exposure, where containment is not
+replicable by per-request caps; and fleets that run hot, past
+saturation, where the sign has already flipped. Even there, the
+K-to-floor result disciplines enthusiasm: reserve for the few flows
+whose completion is worth a known premium, and for nothing else, which
+is what Section 3's first lesson prescribed before the evaluation
+priced it.
+
+Three things could move the verdict, and we name them rather than imply
+them. Hardware calibration: the binding sensitivity of Section 7.6
+means the deficit's magnitude, not its sign, is uncertain at roughly
+the uncertainty of one anchored constant; a calibrated rerun is
+mechanical if the constant is ever measured. Workload shape: gap
+structure drives stranding, and agentic workloads with tighter
+tool-time distributions than our anchors would shrink the premium.
+Objective: this evaluation priced everything into one number by design;
+an operator who prices tail latency or adversarial robustness as
+first-class objectives is solving a different optimization, and Section
+7's decomposition is written to let them price it. What cannot move the
+verdict is re-measurement under this registration: the one-fix clause
+spent its fix, and the number stands.

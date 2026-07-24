@@ -1,0 +1,122 @@
+# PRE-REGISTERED TUNING GRID (spec Section 4 baseline fairness protocol).
+# House style: hyphens only (D-026).
+#
+# Spec Section 4, verbatim: "Each baseline gets a tuning budget equal to ours: a
+# pre-registered grid over its policy parameters, tuned per workload family on
+# validation seeds, evaluated on held-out seeds."
+#
+# Three commitments this file makes, all mechanically enforced by tests:
+#
+#   1. EQUAL BUDGET. Every tunable policy gets exactly `budget` grid points -- no
+#      more for ours, no fewer for theirs. A test fails the build if any grid has a
+#      different size. We do not get to search harder than the baselines do.
+#
+#   2. VALIDATION / HELD-OUT SPLIT. Parameters are chosen on `validation` seeds and
+#      the chosen parameters are then evaluated on `heldout` seeds, which the tuner
+#      never sees. The two seed sets are disjoint (tested). This is what stops us
+#      from tuning on the test set.
+#
+#   3. TUNED PER WORKLOAD FAMILY. A policy is tuned separately for each family, so
+#      no baseline is penalized for a setting that happened to suit one regime.
+#
+# The objective is the PRIMARY METRIC: goodput per provisioned GPU-hour (spec
+# Section 2). Every policy, ours included, is tuned to maximize the same number --
+# the one that already charges us for the capacity our reservations strand.
+
+budget: 8
+
+seeds:
+  # Disjoint by construction. The tuner sees only `validation`.
+  validation: [1, 2, 3]
+  heldout: [101, 102, 103, 104, 105]
+
+# The cell tuning runs in. Deliberately contended: tuning a scheduler on an
+# uncontended cluster finds nothing, because every policy looks identical when there
+# is enough capacity for everyone. (Measured: at 0.28 utilization all six policies
+# scored within 0.8 percent of each other, including the no-control floor.)
+cell:
+  # HORIZON 1500s (was 300s) to match the grid: agentic flows must be able to
+  # complete or tuning optimizes for a horizon-truncated objective (H3_ZERO_CHECK.md).
+  # NOTE: re-run tuning at this horizon before the final grid (tuned_params.json is
+  # currently tuned at 300s).
+  horizon_s: 1500.0
+  warmup_s: 150.0
+  tick_interval_s: 0.5
+  cluster:
+    num_devices: 4
+    device:
+      hbm_capacity_gib: 80.0
+      max_concurrent_decodes: 16
+
+  # CAPACITY CALIBRATION (measured, not guessed). On this cluster the no-control
+  # floor's sustainable throughput saturates at ~32.3 completed flows/s: arrivals are
+  # served ~1:1 up to ~30/s, and beyond that completions plateau regardless of offered
+  # load. So 1.0x load == 32 arrivals/s. Re-measure if the cluster or the service
+  # constants change.
+  capacity_arrival_rate_per_s: 32.0
+
+  # Tuning is done ACROSS the core operating region, not at one load. Tuning at a
+  # single load would let a policy be fitted to the regime that happens to suit it --
+  # and these policies are strongly regime-dependent (the reservation discipline
+  # measurably LOSES at moderate overload and wins at heavy overload). Averaging the
+  # objective over the region is what stops us from picking the load that flatters us.
+  # These loads sit inside the pre-registered main grid (spec Section 7: load 0.7-1.5x)
+  # and above the corner-cell exclusion (spec Section 5: offered load < 0.6x is
+  # declared unrealistic and cannot count toward support).
+  loads: [0.7, 1.0, 1.3]
+  load_anchor: "spec Section 7 main grid load 0.7-1.5x; spec Section 5 excludes < 0.6x as a corner cell"
+
+# Workload families (spec Section 5 mix sweep). Each is an override applied to
+# configs/workload.yaml, using dotted paths.
+families:
+  mix_10:
+    mix.agentic_token_share: 0.10
+  mix_30:
+    mix.agentic_token_share: 0.30
+  mix_50:
+    mix.agentic_token_share: 0.50
+
+# FCFS is the no-control FLOOR (spec Section 4 baseline 5). It has no parameters, so
+# there is nothing to tune and no budget to spend. Listed explicitly so its absence
+# from the grids is a stated decision, not an oversight.
+untuned_policies: [fcfs]
+
+# --- the grids. Each is a set of axes; the grid is their cross product ------------
+# Every one must multiply out to exactly `budget` points.
+grids:
+
+  # OURS. Tuned exactly like everything else, on the same budget. The K and pin-mode
+  # axes double as ablations A5 and A4, but the headline number uses the tuned pick.
+  reservation:
+    reserved_subset_fraction: [0.05, 0.15]   # K, the bounded reserved subset
+    pin_mode: [strict, tiered]                # A4
+    degradation.action: [shorten, truncate]   # how hard we shed under pressure
+
+  # vLLM: how full to run the batch, and what a preemption costs.
+  vllm_style:
+    max_batch_fraction: [0.7, 0.8, 0.9, 1.0]  # max_num_seqs, as a fraction
+    preempt_mode: [recompute, swap]           # the two spec Section 4 variants
+
+  # Niyama: where the demotion cliff sits, and what a preemption costs.
+  niyama_style:
+    demote_after_fraction: [0.5, 0.75, 0.9, 1.0]
+    preempt_mode: [recompute, swap]
+
+  # FastServe: the shape of the MLFQ ladder, and what a preemption costs.
+  fastserve_mlfq:
+    num_levels: [2, 4]
+    quantum_scale: [0.5, 2.0]                 # stretch/compress the quantum ladder
+    preempt_mode: [recompute, swap]
+
+  # CONCUR: the AIMD control law itself.
+  concur_style:
+    additive_increase: [1.0, 2.0]
+    multiplicative_decrease: [0.5, 0.75]
+    congestion_queue_threshold: [0.25, 0.5]
+
+  # MARS (Amendment 1): its AIMD control law and the MARS-specific KV-retention
+  # threshold. Exactly 8 points, same budget as every other baseline.
+  mars_style:
+    additive_increase: [1.0, 2.0]
+    multiplicative_decrease: [0.5, 0.75]
+    retain_threshold_tokens: [500, 2000]

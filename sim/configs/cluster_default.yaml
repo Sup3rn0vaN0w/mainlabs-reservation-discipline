@@ -1,0 +1,15 @@
+# Default cluster definition for the T-055 simulator.
+# House style: hyphens only (D-026). Values annotated with their anchor.
+#
+# The main grid sweeps cluster size 8-64 (spec Section 6 / Section 7). This file
+# is the single-device-family default used as a building block and by the SG1
+# sanity harness.
+
+cluster:
+  num_devices: 8
+  size_anchor: "spec Section 6: cluster size sweep 8-64 devices"
+  device:
+    hbm_capacity_gib: 80.0
+    hbm_anchor: "A100-80G / H100-80G HBM capacity; the modeled device class"
+    max_concurrent_decodes: 256
+    batch_anchor: "continuous-batching max batch is O(hundreds) for ~13B on 80 GiB; 256 placeholder, HBM is the binding constraint in practice"

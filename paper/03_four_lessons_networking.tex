@@ -1,0 +1,84 @@
+\section{Four lessons networking already paid for}
+
+Resource management under the tension between per-unit guarantees and
+aggregate efficiency is the central design problem of packet networking's
+middle decades, and the field's resolutions were expensive: standardized
+architectures were built, deployed at scale, and abandoned before the
+surviving doctrine settled. Four of those lessons transfer to the serving
+layer, and the discipline of Section 4 is their deliberate transfer. We
+state each in its original setting, because the failure modes that
+produced them are already visible, in miniature, in the systems of
+Section 2.
+
+Lesson one: per-flow guarantees do not scale to all flows, so guarantee
+few and aggregate the rest. The Integrated Services architecture offered
+end-to-end per-flow reservations, signaled by RSVP, to any flow that
+asked \citep{rfc2205}; it failed in deployment substantially because per-flow
+state in every element of the path could not scale. Its successor
+inverted the design: Differentiated Services keeps per-flow complexity at
+the edge and gives the core only a small set of aggregate classes
+\citep{rfc2475}. The surviving doctrine is neither ``no guarantees'' nor
+``guarantees for all''; it is guarantees rationed to the few flows whose
+requirements justify per-flow state, with class-based service for the
+remainder. Section 4 adopts this shape directly: a deliberately bounded
+reserved subset, and aggregate classes for everything else.
+
+Lesson two: load shedding is a design surface, and it should act early,
+probabilistically, and per class. Random Early Detection drops packets
+with a probability that rises as smoothed queue occupancy grows, before
+the queue is full, precisely so that overload is signaled gradually
+rather than discovered at exhaustion \citep{floyd1993red}; its
+class-differentiated descendants shed lower-precedence traffic first
+within the same discipline \citep{rfc2597}. The alternative, tail drop at a
+full buffer, produces synchronized collapse and serves the most recent
+arrival as badly as the most important one. Section 2's schedulers shed
+load today, but deterministically and at the cliff: demotion at a
+deadline, rejection at a ceiling, preemption at exhaustion. Section 4
+transfers the early-probabilistic-per-class shape, with one deliberate
+change of signal: the serving layer possesses a quantity networks lack, a
+ledger of forward commitments, and Section 4 keys the shedding
+probability to committed headroom rather than to observed queue state.
+
+Lesson three: the plane that supervises a system must not share fate with
+the system it supervises. Operators reach a wedged or compromised machine
+through a management path that is powered, connected, and authenticated
+independently of the machine's own stack: the baseboard management
+controller and its descendants \citep{ipmi_spec}. The design premise is
+unconditional: the moment supervision runs inside the thing supervised,
+every failure of the thing is potentially a failure of its supervision,
+and the cases where supervision matters most are exactly the cases where
+the system is least trustworthy. Today's model-level oversight, guard
+models in the pipeline, self-critique in the context, probes in the
+process, sits inside the supervised stack. Section 4 transfers the
+doctrine: a management plane whose authority and availability are
+independent of the inference infrastructure, whatever signals it consumes
+from within.
+
+Lesson four: bind authority to provenance at the edge, not to content
+downstream. Networks learned to discard traffic whose claimed origin does
+not match the path it arrived by, at the ingress edge, before that
+traffic can spend the network's resources or authority \citep{rfc2827,rfc3704}. The alternative, judging packets by their payloads deeper in
+the network, loses to any adversary who can forge plausible content,
+which is every adversary. The serving-layer analog is stated carefully in
+Section 4, because content-level defenses for language models are an
+active field with real results; the transfer claims only the resource
+half: whatever a flow's content says, the provenance class assigned at
+admission should bound what capacity and authority the flow can hold.
+
+One table summarizes the mapping (Appendix C expands it): rationed
+per-flow guarantees over aggregate classes $\to$ the bounded reserved subset;
+early probabilistic class-aware shedding $\to$ headroom-keyed degradation;
+fate-independent supervision $\to$ the management plane; provenance-bound
+authority at the edge $\to$ trust-keyed admission. The transfers hold at the
+granularity where they are claimed, the flow, where a control decision is
+cheap relative to the minutes or hours of work it governs; they fail at
+per-token or per-layer granularity, where the decision rivals the work;
+and flows are not packets, since a flow's accumulated state entangles it
+with the machinery serving it in ways a datagram never is. The lessons
+are a design inheritance, bought at someone else's expense, and the
+discipline that follows spends it. The evaluation that follows the
+discipline then tests whether the inheritance survives the transfer: the
+first lesson's economics, this paper finds, largely do not (Sections 7
+and 9), the second lesson's transferred signal proves untenable in its
+transferred form, and the third and fourth lessons' properties were never
+economic claims and are examined on their own terms in Section 9.

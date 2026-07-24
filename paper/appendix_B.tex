@@ -1,0 +1,15 @@
+\section{Degradation probability families}
+
+{\small
+\begin{verbatim}
+p(H) requirements: p monotone non-increasing in H; p(H) = 0 for H >= H_max;
+p(H) = p_ceiling for H <= H_min. Families: piecewise-linear between
+(H_max, 0) and (H_min, p_ceiling); exponential p = p_ceiling * ((H_max -
+H)/(H_max - H_min))^k for shaping early gentleness; per-class and
+per-provenance parameterization as a matrix {H_max, H_min, p_ceiling,
+action ladder}_c,tr with lower classes and lower trust assigned earlier
+H_max and higher p_ceiling. H computed from the ledger over forecast window
+W; W trades responsiveness against stability and is swept in the
+evaluation.
+\end{verbatim}
+}

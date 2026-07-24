@@ -1,0 +1,78 @@
+\section{Pre-registered design}
+
+\begin{table}[t]
+\centering
+\small
+\caption{Policy roster and tuned parameters per workload family (corrected-horizon tuning campaign; 8-point equal-budget grids).}
+\label{tab:roster}
+\input{tables/T1_roster}
+\end{table}
+
+The evaluation specification was frozen on 2026-07-06, before any simulator
+code existed, and committed to an append-only repository; the frozen text
+with its complete amendment log is released with this paper \citep{evalspec2026}.
+This section restates its commitments; the specification governs where they
+differ.
+
+Primary metric. Task-level goodput per provisioned GPU-hour: value-weighted
+completed flows per hour, normalized by provisioned capacity. The
+normalization is the honesty mechanism: capacity a reservation holds idle
+lowers the discipline's own score arithmetically, so stranding, the
+mechanism's known cost, is priced inside the headline number rather than
+negotiated beside it. Value weights are fixed in the specification and
+varied only in a declared sensitivity sweep. Related serving metrics score
+completed requests against latency targets \citep{mars2026}; ours differs in unit
+and denominator, flow completions valued per provisioned GPU-hour, so that
+held-but-idle guarantees are charged to the discipline that holds them.
+
+Thresholds, fixed before data. Support required a median improvement of at
+least 10 percent over the best baseline, selected per cell as the strongest
+tuned opponent in that cell (deliberately conservative against the
+mechanism), across at least 60 percent of the core region, with
+interactive-traffic p95 time-to-first-token degradation held under 5
+percent. Below 5 percent median improvement, or on guardrail violation
+across the region: kill. Between: a weak result. The verdict is computed
+mechanically by released code as a pure function of the run manifests.
+
+Region. The core region spans interactive-to-agentic traffic mixes (90/10,
+70/30, 50/50 by token volume), offered loads 0.7 to 1.5 times measured
+capacity, idle-gap distributions with medians of 20, 60, and 300 seconds,
+and cluster sizes of 8 to 32 devices (Amendment 3, below). Corner cells
+were pre-declared excluded; none required exclusion in the final grid.
+
+Baselines and fairness. Six baselines: vLLM-style priority scheduling with
+preemption and paged cache \citep{vllm2023}; FastServe-style multi-level feedback
+queues \citep{wu2023fastserve}; Niyama-style deadline-aware class scheduling with
+deterministic demotion \citep{niyama2025}; CONCUR-style AIMD admission with
+pause/resume \citep{concur2026}; a MARS-style external admission controller with
+cost-benefit cache retention \citep{mars2026}, added by Amendment 1; and FCFS
+continuous batching as the no-control floor. Every tunable policy,
+including ours, received an identical tuning budget: an 8-point
+pre-registered grid, tuned per workload family on validation seeds and
+scored on disjoint held-out seeds, with a build-failing test asserting no
+policy's grid is larger than any other's. The tuned parameters and both
+scores are released (Table 1).
+
+The amendment log, in full. Pre-registration without a change log is
+theater; ours has three amendments and one integrity ruling, each numbered,
+dated, reasoned, and adopted before the final grid ran. Amendment 1
+(2026-07-14): the MARS-style baseline added, because a negative headline
+makes baseline completeness load-bearing. Amendment 2 (2026-07-15): all
+measurement horizons raised to at least 1500 seconds after a diagnostic
+showed the build default (300 seconds) was shorter than the workload's
+median flow lifetime (roughly 863 seconds as measured on the diagnostic
+realization; the released population derivation gives roughly 711),
+right-censoring the large majority of agentic flows (78.5 percent of the
+diagnostic realization, roughly 75 percent of the population,
+incompletable within a 200-second window) and biasing the primary metric against
+reservation-holding policies; adopted with a one-fix clause, no further
+measurement correction in either direction, Section 8 reports the finding
+in full. Amendment 3 (2026-07-20): the device axis reduced to 8/16/32 and
+replications to three seeds after direct measurement showed the frozen grid
+infeasible at the corrected horizon (projected 39,600 to 49,700 cpu-hours, a single 64-device run
+estimated at 24 to 32 wall-clock hours, unparallelizable); direction of effect unknown for the
+device axis, neutral for seeds, and the paper states the narrowed scope.
+Integrity ruling (2026-07-20): 189 pre-amendment manifests found in the
+verdict path's evidence directory were quarantined and an input-domain
+guard added that hard-errors on any manifest outside the grid it claims to
+report; measurement semantics unchanged.
