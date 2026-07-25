@@ -24,7 +24,7 @@ all PFC-1 counts unchanged, all stale-string greps zero.
 | F2a | "stranded at least 88 percent" (Abstract, S1) | Abstract, S1 | grid per-cell medians >= 88.9 in every cell where reservations were granted; ablation floor 88 (canonical readout; per-run min 87.3, per-mix medians 89.0-95.6) | PASS (note) |
 | F3 | "reservation ahead by 0.8 to 3.2 percent in all 24 non-guardrail-failing cells" | S7.1 | 24 of 24 positive, +0.8 to +3.2 | PASS |
 | F4 | "H2 carries only corrected-horizon data: an earlier censored-horizon reading was ruled unverified and excluded from the released record" | S7.3 | matches the record exactly (preliminary readout carries no H2 value; +6.5 nowhere in the record) | PASS |
-| F5 | "default horizons ran 150 to 300 seconds; even at a 200-second window only 21.5 percent... could complete" (S8); "78.5 percent incompletable within the 200-second window" (S5); F4 caption re-attributed | S5, S8, FIGURE_SPEC F4 | zero-check: grid 300s / H2 150s / H3 200s; 21.5 percent at 200s | PASS |
+| F5 | "default horizons ran 150 to 300 seconds; even at a 200-second window only 21.5 percent... could complete" (S8); "78.5 percent incompletable within the 200-second window" (S5); F5 caption re-attributed (horizon figure; PFC-4) | S5, S8, FIGURE_SPEC F5 | zero-check: grid 300s / H2 150s / H3 200s; 21.5 percent at 200s | PASS |
 | F6 | "141 tests" (x2) | S6, Artifacts | pytest collects 141 | PASS |
 | F7 | "projected 39,600 to 49,700 cpu-hours, a single 64-device run estimated at 24 to 32 wall-clock hours, unparallelizable" | S5 | SG7_GRID_FEASIBILITY: projection 39,600-49,700; 64-device run est. 24-32 h, unsettled at 16.2 h; matches as estimate, no over-claim | PASS |
 | M1 | "at 1.3x it recovers to 9.5 to 11.5 percent" | S7.1 | measured 9.5 to 11.5 | PASS |
@@ -56,8 +56,8 @@ ablation idle, duty cycle ~5 percent; sensitivity 21.5->4.4 / 13.0, 0 of
 19,342, 39 percent, 43 percent; horizon table -22.3 / -7.8 stable through
 6000s; tuning K-to-floor both horizons, quantum flip; amendments and dates;
 189 quarantined; Little's law 0.00 percent, utilization <= 0.95 percent;
-collapse disclosure). Figure assertions: F1 computed median = -10.3 PASS;
-F3 rates = T3 PASS; F4 points = zero-check table PASS (caption now correctly
+collapse disclosure). Figure assertions (PFC-4 numbering): F1 computed median = -10.3 PASS;
+F4 rates = T3 PASS; F5 points = zero-check table PASS (caption now correctly
 attributes 21.5 percent to 200s).
 
 ## 5. NEW ROWS FOUND IN v2
@@ -117,3 +117,22 @@ percent" x1, "10 to 23" x0. **PASS.**
 - Source-doc internal variances noted in v1 stand (19,342 vs 19,345;
   39.4 vs 63.3 percent HBM across the two harness runs; collapse-table
   column semantics).
+
+## 7. PFC-4 FIGURE RENUMBERING (2026-07-24)
+
+Figures were renumbered to first-citation order; caption text, figure
+content, assertions, and every underlying number are unchanged. This audit's
+own row identifiers (F1-F7, F2a, M1, N1, N2) are audit rows, NOT figure
+numbers, and did not move.
+
+| content | was | is | first cited |
+|---|---|---|---|
+| improvement vs offered load | Figure 1 | Figure 1 | S7.1 |
+| isolation and stranding | Figure 2 | Figure 2 | S7.2 |
+| served value (H2 load sweep) | Figure 5 | **Figure 3** | S7.3 |
+| containment and starvation | Figure 3 | **Figure 4** | S7.4 |
+| horizon censoring | Figure 4 | **Figure 5** | S8 |
+
+Assertions travel with figure CONTENT, not number: the served-value AUC check
+now runs as F3, the H3-rate check as F4, the horizon check as F5, each still
+bound to the same data and the same frozen values.

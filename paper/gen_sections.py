@@ -22,7 +22,9 @@ KEY = r"[a-z][a-z_0-9]*"
 CITE_RE = re.compile(rf"\[({KEY}(?:\s*,\s*{KEY})*)\]")
 
 # FINAL captions from FIGURE_SPEC_MERGED.md (PFC-3 state), minus the
-# auto-generated "Figure N: " prefix. Never edited here.
+# auto-generated "Figure N: " prefix. Never edited here. Keys are the
+# PFC-4 first-citation numbers: F3 served value (S7.3), F4 containment
+# (S7.4), F5 horizon (S8). Caption TEXT never moved; only its number.
 CAPTIONS = {
     "F1": ("Per-cell improvement of the reservation discipline over the best "
            "per-cell tuned baseline, across offered load. Each point is one of "
@@ -44,7 +46,7 @@ CAPTIONS = {
            "of 81 cells, with three load-1.5 cells at 88.9 percent and one "
            "cell granted no reservations (marked), the structural duty-cycle "
            "cost of Section 7.5."),
-    "F3": ("Compliant-flow completion under adversarial runaway injection, "
+    "F4": ("Compliant-flow completion under adversarial runaway injection, "
            "absolute rates. The reservation discipline holds near 0.5 with a "
            "worst-case degradation of 3.1 points; FCFS completes 0.33 with no "
            "containment; the two strongest request-oriented baselines "
@@ -53,7 +55,7 @@ CAPTIONS = {
            "compliant flows ever scheduled, zero preemptions; Section 7.4). "
            "Deltas against zero are undefined, which is why rates are "
            "absolute."),
-    "F4": ("Horizon censoring on one core cell. The population median agentic "
+    "F5": ("Horizon censoring on one core cell. The population median agentic "
            "flow lifetime, derived from the released workload generators, is "
            "roughly 711 seconds (first measured at 863 seconds on the "
            "diagnostic realization that surfaced the artifact, open markers); "
@@ -66,7 +68,7 @@ CAPTIONS = {
            "than the workload's completable lifetimes charge "
            "guarantee-holders full stranding cost against zero completion "
            "payoff (Section 8)."),
-    "F5": ("Served value across the load sweep. The reservation discipline's "
+    "F3": ("Served value across the load sweep. The reservation discipline's "
            "area under curve (0.626) trails deterministic demotion (0.648), "
            "killing the graceful-degradation hypothesis; the "
            "admission-throttling baselines collapse under overload "
@@ -87,9 +89,9 @@ TABLE_CAPTIONS = {
 FIG_FILES = {
     "F1": "F1_improvement_vs_load.pdf",
     "F2": "F2_isolation_and_stranding.pdf",
-    "F3": "F3_containment_starvation.pdf",
-    "F4": "F4_horizon_lesson.pdf",
-    "F5": "F5_served_value.pdf",
+    "F4": "F4_containment_starvation.pdf",
+    "F5": "F5_horizon_lesson.pdf",
+    "F3": "F3_served_value.pdf",
 }
 
 
@@ -97,7 +99,7 @@ def fig_block(name: str, double: bool, label: str) -> str:
     env = "figure*" if double else "figure"
     width = r"\textwidth" if double else "3.4in"
     return "\n".join([
-        rf"\begin{{{env}}}[t]", r"\centering",
+        rf"\begin{{{env}}}[tbp]", r"\centering",
         rf"\includegraphics[width={width}]{{figures/{FIG_FILES[name]}}}",
         rf"\caption{{{CAPTIONS[name]}}}",
         rf"\label{{{label}}}",
@@ -107,29 +109,40 @@ def fig_block(name: str, double: bool, label: str) -> str:
 def tab_block(name: str, fname: str, label: str, small: bool = True) -> str:
     size = r"\small" if small else r"\footnotesize"
     return "\n".join([
-        r"\begin{table}[t]", r"\centering", size,
+        r"\begin{table}[tbp]", r"\centering", size,
         rf"\caption{{{TABLE_CAPTIONS[name]}}}",
         rf"\label{{{label}}}",
         rf"\input{{tables/{fname}}}",
         r"\end{table}", ""])
 
 
-# Float insertions keyed by the exact md heading they follow.
+# Float insertions keyed by the exact md heading they follow. Under PFC-4 the
+# floats appear in FIRST-CITATION ORDER, so LaTeX's own figure counter yields
+# 1, 2, 3, 4, 5 with no intervention: the \setcounter pair that previously
+# forced the served-value float to render as "Figure 5" out of order is gone,
+# and \label keys are semantic so a future renumber cannot invalidate a \ref.
 INSERTS = {
     "## 5. Pre-registered design": tab_block("T1", "T1_roster", "tab:roster"),
     "### 7.1 H1: the primary comparison":
-        fig_block("F1", True, "fig:f1") + tab_block("T2", "T2_verdict", "tab:verdict"),
+        fig_block("F1", True, "fig:improvement") + tab_block("T2", "T2_verdict", "tab:verdict"),
     "### 7.2 What the stranding buys: isolation, and where it inverts":
-        fig_block("F2", True, "fig:f2"),
+        fig_block("F2", True, "fig:ledger"),
     "### 7.3 H2: the graceful-degradation hypothesis, reversed and killed":
-        "\\setcounter{figure}{4}\n" + fig_block("F5", False, "fig:f5")
-        + "\\setcounter{figure}{2}\n",
+        fig_block("F3", False, "fig:servedvalue"),
     "### 7.4 H3: containment, and the starvation result":
-        fig_block("F3", False, "fig:f3")
+        fig_block("F4", False, "fig:containment")
         + tab_block("T3", "T3_h3_rates", "tab:h3", small=False),
     "### 7.6 Sensitivity: what the numbers are conditioned on":
         tab_block("T4", "T4_sensitivity", "tab:sens", small=False),
-    "## 8. The horizon lesson": fig_block("F4", False, "fig:f4"),
+}
+
+# Floats emitted AFTER the Nth paragraph of a section rather than at its head.
+# Used where the citation is not in the opening paragraph: a head-inserted
+# float can otherwise be placed a page ahead of the text that cites it.
+INSERT_AFTER_CITE = {
+    # Section 8 cites Figure 5 in its second paragraph ("Quantified on one
+    # core cell (Figure 5)").
+    "## 8. The horizon lesson": (fig_block("F5", False, "fig:horizon"), 2),
 }
 
 
@@ -197,6 +210,17 @@ def main() -> None:
             n, title = int(m.group(1)), m.group(2)
             fname = f"{n:02d}_{re.sub(r'[^a-z0-9]+', '_', title.lower())[:24].strip('_')}"
             emit(fname, f"\\section{{{title}}}\n")
+            if head in INSERT_AFTER_CITE:
+                # Emit the float AFTER the paragraph that cites it, so [tbp]
+                # cannot hoist it onto a page the reader reaches before the
+                # citation. Section 8's citation sits two paragraphs in, which
+                # is why a section-head insert put Figure 5 a page early.
+                block, n_para = INSERT_AFTER_CITE[head]
+                paras = prose(text).split("\n\n")
+                emit(fname, "\n\n".join(paras[:n_para]) + "\n\n")
+                emit(fname, block)
+                emit(fname, "\n\n".join(paras[n_para:]) + "\n")
+                continue
             if head in INSERTS:
                 emit(fname, INSERTS[head])
             emit(fname, prose(text) + "\n")

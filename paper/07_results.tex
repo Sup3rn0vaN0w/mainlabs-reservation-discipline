@@ -9,13 +9,13 @@ affected baselines and therefore runs against the mechanism.
 
 \subsection{H1: the primary comparison}
 
-\begin{figure*}[t]
+\begin{figure*}[tbp]
 \centering
 \includegraphics[width=\textwidth]{figures/F1_improvement_vs_load.pdf}
 \caption{Per-cell improvement of the reservation discipline over the best per-cell tuned baseline, across offered load. Each point is one of 108 pre-registered core cells; the heavy line traces the per-load median. The deficit is U-shaped, deepest at nominal provisioning (22 to 24 percent at 1.0x), and the sign flips past saturation (+1 to +3 percent at 1.5x). Dashed lines mark the pre-registered WEAK (+5 percent) and SUPPORT (+10 percent) thresholds; no cell reaches SUPPORT. Open symbols mark the three cells failing the interactive guardrail (Section 7.2).}
-\label{fig:f1}
+\label{fig:improvement}
 \end{figure*}
-\begin{table}[t]
+\begin{table}[tbp]
 \centering
 \small
 \caption{Pre-registered verdict summary (thresholds fixed 2026-07-06).}
@@ -60,11 +60,11 @@ under any reading.
 
 \subsection{What the stranding buys: isolation, and where it inverts}
 
-\begin{figure*}[t]
+\begin{figure*}[tbp]
 \centering
 \includegraphics[width=\textwidth]{figures/F2_isolation_and_stranding.pdf}
 \caption{What the stranding buys. (a) Interactive p95 time-to-first-token change versus the best baseline per cell: at and above nominal load, reservations improve interactive tail latency by 63 to 97 percent by keeping agentic flows off the shared pool; the effect inverts only in the heavy-agentic, overloaded, short-gap corner, where the guardrail fails (Section 7.2). (b) Reserved-idle fraction per cell: the isolation of panel (a) is priced in capacity held idle, 93 to 100 percent of the reserved pool in 77 of 81 cells, with three load-1.5 cells at 88.9 percent and one cell granted no reservations (marked), the structural duty-cycle cost of Section 7.5.}
-\label{fig:f2}
+\label{fig:ledger}
 \end{figure*}
 
 The guardrail was pre-registered as a constraint, interactive p95
@@ -99,14 +99,12 @@ baseline, +77 percent) does not repeat at any neighboring cell.
 
 \subsection{H2: the graceful-degradation hypothesis, reversed and killed}
 
-\setcounter{figure}{4}
-\begin{figure}[t]
+\begin{figure}[tbp]
 \centering
-\includegraphics[width=3.4in]{figures/F5_served_value.pdf}
+\includegraphics[width=3.4in]{figures/F3_served_value.pdf}
 \caption{Served value across the load sweep. The reservation discipline's area under curve (0.626) trails deterministic demotion (0.648), killing the graceful-degradation hypothesis; the admission-throttling baselines collapse under overload (Section 7.3).}
-\label{fig:f5}
+\label{fig:servedvalue}
 \end{figure}
-\setcounter{figure}{2}
 
 H2 held that degradation keyed to committed headroom yields a better
 served-value curve under overload than deterministic demotion and
@@ -114,7 +112,7 @@ preempt-and-requeue. It does not. Over the full load sweep (0.5x to 3.0x),
 the reservation discipline's served-value area under curve is 0.626
 against the best baseline's 0.648 (Niyama-style deterministic demotion), a
 3.4 percent deficit; FastServe and vLLM-style also finish ahead (Figure
-5). H2 carries only corrected-horizon data: an earlier censored-horizon
+3). H2 carries only corrected-horizon data: an earlier censored-horizon
 reading was ruled unverified and excluded from the released record, and
 Section 8 explains why censored-horizon comparisons mislead; the
 superseded preliminary readouts are released as filed. Two
@@ -128,13 +126,13 @@ hard enough to lose on aggregate served value.
 
 \subsection{H3: containment, and the starvation result}
 
-\begin{figure}[t]
+\begin{figure}[tbp]
 \centering
-\includegraphics[width=3.4in]{figures/F3_containment_starvation.pdf}
+\includegraphics[width=3.4in]{figures/F4_containment_starvation.pdf}
 \caption{Compliant-flow completion under adversarial runaway injection, absolute rates. The reservation discipline holds near 0.5 with a worst-case degradation of 3.1 points; FCFS completes 0.33 with no containment; the two strongest request-oriented baselines complete zero compliant flows at every level including no injection, instrumented admission starvation (one of 107 compliant flows ever scheduled, zero preemptions; Section 7.4). Deltas against zero are undefined, which is why rates are absolute.}
-\label{fig:f3}
+\label{fig:containment}
 \end{figure}
-\begin{table}[t]
+\begin{table}[tbp]
 \centering
 \footnotesize
 \caption{H3 absolute compliant-flow completion rates at each runaway-injection level, with the worst delta versus the no-injection condition (percentage points).}
@@ -146,7 +144,7 @@ Under adversarial runaway injection at 0, 1, 5, and 10 percent of agentic
 arrivals, the discipline's cross-invocation budget does what it was
 specified to do: compliant-flow completion holds at 0.503, 0.475, 0.499,
 and 0.471, a worst-case degradation of 3.1 points, and every runaway is
-cut off at exactly its budget (Figure 3, Table 3). The comparison column,
+cut off at exactly its budget (Figure 4, Table 3). The comparison column,
 however, is the finding. The two strongest request-oriented baselines,
 vLLM-style and Niyama-style, complete 0.000 of compliant agentic flows at
 every injection level including zero. This is not a missing measurement;
@@ -217,7 +215,7 @@ horizons, points the same way at larger scale.
 
 \subsection{Sensitivity: what the numbers are conditioned on}
 
-\begin{table}[t]
+\begin{table}[tbp]
 \centering
 \footnotesize
 \caption{Service-model sensitivity: measured effect and binding classification per constant.}

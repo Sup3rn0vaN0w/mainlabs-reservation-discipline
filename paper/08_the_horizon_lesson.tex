@@ -1,12 +1,5 @@
 \section{The horizon lesson}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=3.4in]{figures/F4_horizon_lesson.pdf}
-\caption{Horizon censoring on one core cell. The population median agentic flow lifetime, derived from the released workload generators, is roughly 711 seconds (first measured at 863 seconds on the diagnostic realization that surfaced the artifact, open markers); at a 200-second window only about a quarter of agentic flows can complete even on an idle cluster (24.5 percent of the population; 21.5 percent of the diagnostic realization), while the campaign's default horizons ran 150 to 300 seconds. The measured deficit is 22.3 percent at a 300-second horizon and halves to 7.8 percent at adequate horizons, stable through 6000 seconds. Horizons shorter than the workload's completable lifetimes charge guarantee-holders full stranding cost against zero completion payoff (Section 8).}
-\label{fig:f4}
-\end{figure}
-
 The evaluation's most generalizable finding is about measurement, and it
 was found the way such things are found: by investigating a suspicious
 zero. The starvation diagnostic of Section 7.4 revealed, alongside the
@@ -28,12 +21,20 @@ policies specifically. A reservation pays its stranding cost during the
 flow and collects its payoff at completion; a horizon that ends before
 completion charges the full cost against zero payoff, the mechanism's
 worst case by construction, while policies that never schedule long flows
-at all are barely touched. Quantified on one core cell (Figure 4), the
+at all are barely touched. Quantified on one core cell (Figure 5), the
 discipline's deficit against the best baseline was 22.3 percent at a
 300-second horizon and 7.8 percent at 1500 seconds, stable through 6000
 seconds; at the longest horizon the discipline completed more flows in
 absolute terms than its comparator while still losing on value-weighted
 goodput, a real loss, but half the reported one.
+
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=3.4in]{figures/F5_horizon_lesson.pdf}
+\caption{Horizon censoring on one core cell. The population median agentic flow lifetime, derived from the released workload generators, is roughly 711 seconds (first measured at 863 seconds on the diagnostic realization that surfaced the artifact, open markers); at a 200-second window only about a quarter of agentic flows can complete even on an idle cluster (24.5 percent of the population; 21.5 percent of the diagnostic realization), while the campaign's default horizons ran 150 to 300 seconds. The measured deficit is 22.3 percent at a 300-second horizon and halves to 7.8 percent at adequate horizons, stable through 6000 seconds. Horizons shorter than the workload's completable lifetimes charge guarantee-holders full stranding cost against zero completion payoff (Section 8).}
+\label{fig:horizon}
+\end{figure}
 
 The subtler effect is that censoring corrupts tuning, not only
 measurement. Re-tuning every policy at the corrected horizon flipped

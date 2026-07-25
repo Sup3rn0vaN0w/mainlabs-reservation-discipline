@@ -1,22 +1,27 @@
-"""Figure and table generation for the merged paper (PKG3, FIGURE_SPEC_MERGED v1.0 + PFC-3).
+"""Figure and table generation for the merged paper (FIGURE_SPEC_MERGED v1.0, PFC-3 + PFC-4).
 
 Every figure derives from MANIFESTS via the released analysis code -- never from
 readout markdown -- with two spec'd exceptions carried as data blocks below:
-F4's horizon-deficit series (the FIGURE_SPEC names the H3_ZERO_CHECK horizon
-table as F4's data) and T4's sensitivity rows (from the harness check document).
+F5's horizon-deficit series (the FIGURE_SPEC names the H3_ZERO_CHECK horizon
+table as F5's data) and T4's sensitivity rows (from the harness check document).
 Each figure asserts agreement with the frozen-paper numbers; an assertion
 failure is a STOP-and-escalate, never a silent fix.
 
-Assertions (FIGURE_SPEC CODE INSTRUCTION + F2 PFC-2 + F4 PFC-3):
+Figure numbers follow FIRST-CITATION ORDER (PFC-4, 2026-07-24): served
+value is Figure 3 (cited S7.3), containment Figure 4 (S7.4), horizon
+Figure 5 (S8). Assertions travel with their figure's CONTENT, not its
+number, so the renumbering cannot silently rebind a check.
+
+Assertions (FIGURE_SPEC CODE INSTRUCTION + F2 PFC-2 + F5 PFC-3):
   F1: computed per-cell median improvement == -10.3 percent.
   F2: panel (b) finds 77 at-or-above-nominal cells in [93,100], three in
       [88,90], and exactly one cell with zero granted reservations.
-  F3: computed H3 rates match the frozen T3 table exactly.
-  F4: population median lifetime in [690, 730] and completable-at-200s in
+  F3: computed AUCs match the frozen values (0.626 vs 0.648, -3.4 percent).
+  F4: computed H3 rates match the frozen T3 table exactly.
+  F5: population median lifetime in [690, 730] and completable-at-200s in
       [23, 26] (workload/lifetimes.py, n=2000, fixed seed); deficit points
       match the zero-check table; discovery-realization points (863s, 21.5
       percent) overlaid as open markers.
-  F5: computed AUCs match the frozen values (0.626 vs 0.648, -3.4 percent).
 
 VISUAL QC GATE (operator ruling, permanent): constrained_layout on; legends
 outside dense axes; jittered clouds at alpha 0.6; grouped sparse rotated tick
@@ -70,7 +75,7 @@ POLICY_STYLE = {
 MIX_COLOR = {0.1: "#0072B2", 0.3: "#E69F00", 0.5: "#009E73"}
 GAP_MARKER = {20.0: "o", 60.0: "s", 300.0: "^"}
 
-# The frozen T3 table (H1_READOUT_FINAL H3 section), the F3 assertion target.
+# The frozen T3 table (H1_READOUT_FINAL H3 section), the F4 assertion target.
 FROZEN_T3 = {
     "reservation":    ([0.503, 0.475, 0.499, 0.471], "-3.1"),
     "fcfs":           ([0.332, 0.295, 0.306, 0.282], "-5.0"),
@@ -81,12 +86,12 @@ FROZEN_T3 = {
     "niyama_style":   ([0.000, 0.000, 0.000, 0.000], "+0.0"),
 }
 
-# The frozen F5 assertion targets (H1_READOUT_FINAL H2 section).
+# The frozen F3 assertion targets (H1_READOUT_FINAL H2 section).
 FROZEN_AUC = {"niyama_style": 0.648, "fastserve_mlfq": 0.639, "vllm_style": 0.633,
               "reservation": 0.626, "fcfs": 0.519, "mars_style": 0.411,
               "concur_style": 0.227}
 
-# F4 deficit series: the H3_ZERO_CHECK horizon table (the FIGURE_SPEC's named
+# F5 deficit series: the H3_ZERO_CHECK horizon table (the FIGURE_SPEC's named
 # data source; the 2026-07-15 diagnostic manifests were not retained).
 ZERO_CHECK_HORIZONS = [300, 1500, 3000, 6000]
 ZERO_CHECK_DEFICIT = [-22.3, -7.8, -8.8, -8.8]
@@ -293,17 +298,53 @@ def fig_f2() -> None:
     print("[figures] F2 ASSERT PASS: partition == (77, 3, 1)")
 
 
-# --- F3: containment and starvation -------------------------------------------
+# --- F3: H2 served value ------------------------------------------------------
 
 def fig_f3() -> None:
+    a = h2_auc(_load("h2/*.json"))
+    for pol, target in FROZEN_AUC.items():
+        got = round(a["auc"][pol], 3)
+        if got != target:
+            _fail(f"F3 AUC {pol} {got} != frozen {target}")
+    rel = f"{a['relative'] * 100:+.1f}"
+    if rel != "-3.4":
+        _fail(f"F3 relative {rel} != -3.4")
+
+    manifests = _load("h2/*.json")
+    by: dict[str, dict[float, list]] = {}
+    for m in manifests:
+        by.setdefault(m["spec"]["policy"], {}).setdefault(
+            float(m["spec"]["load"]), []).append(
+            m["metrics"]["served_value_fraction"])
+    fig, ax = plt.subplots(figsize=(SINGLE_W, 3.2), layout="constrained")
+    for pol, st in POLICY_STYLE.items():
+        loads = sorted(by[pol])
+        ys = [statistics.median(by[pol][L]) for L in loads]
+        z = 5 if pol == "reservation" else 3
+        ax.plot(loads, ys, color=st["color"], marker=st["marker"], ls=st["ls"],
+                lw=st["lw"], ms=3.5, zorder=z,
+                label=f"{st['label']} (AUC {a['auc'][pol]:.3f})")
+    ax.set_xlabel("offered load (x measured capacity)")
+    ax.set_ylabel("served-value fraction")
+    ax.set_xticks([0.5, 1.0, 1.5, 2.0, 2.5, 3.0])
+    ax.set_ylim(0, 1.02)
+    ax.legend(frameon=False, fontsize=6, ncol=2, loc="lower center",
+              bbox_to_anchor=(0.5, 1.01))
+    _save(fig, "F3_served_value")
+    print("[figures] F3 ASSERT PASS: AUCs match frozen values, relative -3.4%")
+
+
+# --- F4: containment and starvation -------------------------------------------
+
+def fig_f4() -> None:
     d3 = h3_deltas(_load("h3/*.json"))
     for pol, (rates, worst) in FROZEN_T3.items():
         got = [round(r, 3) for r in d3[pol]["curve"].values()]
         if got != rates:
-            _fail(f"F3 {pol} rates {got} != frozen {rates}")
+            _fail(f"F4 {pol} rates {got} != frozen {rates}")
         gw = f"{d3[pol]['worst_delta'] * 100:+.1f}"
         if gw != worst and gw.replace("+", "-") != worst:
-            _fail(f"F3 {pol} worst delta {gw} != frozen {worst}")
+            _fail(f"F4 {pol} worst delta {gw} != frozen {worst}")
 
     fig, ax = plt.subplots(figsize=(SINGLE_W, 3.0), layout="constrained")
     inj = [0, 1, 5, 10]
@@ -322,13 +363,13 @@ def fig_f3() -> None:
     ax.set_ylim(-0.02, 0.56)
     ax.legend(frameon=False, ncol=2, loc="lower center",
               bbox_to_anchor=(0.5, 1.01))
-    _save(fig, "F3_containment_starvation")
-    print("[figures] F3 ASSERT PASS: rates match the frozen T3 table")
+    _save(fig, "F4_containment_starvation")
+    print("[figures] F4 ASSERT PASS: rates match the frozen T3 table")
 
 
-# --- F4: the horizon lesson (PFC-3 dual-report) -------------------------------
+# --- F5: the horizon lesson (PFC-3 dual-report) -------------------------------
 
-def fig_f4() -> None:
+def fig_f5() -> None:
     from ..core.orchestration import CONFIG_DIR, load_service_model, load_yaml
     from ..workload.lifetimes import agentic_flow_min_lifetimes
 
@@ -339,9 +380,9 @@ def fig_f4() -> None:
     median_lt = statistics.median(lts)
     frac200 = 100.0 * sum(1 for t in lts if t <= 200.0) / len(lts)
     if not (690.0 <= median_lt <= 730.0):
-        _fail(f"F4 population median lifetime {median_lt:.0f}s not in [690, 730]")
+        _fail(f"F5 population median lifetime {median_lt:.0f}s not in [690, 730]")
     if not (23.0 <= frac200 <= 26.0):
-        _fail(f"F4 completable fraction at 200s {frac200:.1f}% not in [23, 26]")
+        _fail(f"F5 completable fraction at 200s {frac200:.1f}% not in [23, 26]")
 
     fig, ax = plt.subplots(figsize=(SINGLE_W, 3.0), layout="constrained")
     ax.plot(ZERO_CHECK_HORIZONS, ZERO_CHECK_DEFICIT, color="black",
@@ -391,46 +432,10 @@ def fig_f4() -> None:
     h2_, l2_ = ax2.get_legend_handles_labels()
     ax.legend(h1_ + h2_, l1_ + l2_, frameon=False, loc="lower center",
               bbox_to_anchor=(0.5, 1.01), fontsize=6)
-    _save(fig, "F4_horizon_lesson")
-    print(f"[figures] F4 ASSERT PASS: population median {median_lt:.0f}s in "
+    _save(fig, "F5_horizon_lesson")
+    print(f"[figures] F5 ASSERT PASS: population median {median_lt:.0f}s in "
           f"[690, 730]; completable at 200s {frac200:.1f}% in [23, 26]; "
           f"deficit series = zero-check table; discovery points overlaid")
-
-
-# --- F5: H2 served value ------------------------------------------------------
-
-def fig_f5() -> None:
-    a = h2_auc(_load("h2/*.json"))
-    for pol, target in FROZEN_AUC.items():
-        got = round(a["auc"][pol], 3)
-        if got != target:
-            _fail(f"F5 AUC {pol} {got} != frozen {target}")
-    rel = f"{a['relative'] * 100:+.1f}"
-    if rel != "-3.4":
-        _fail(f"F5 relative {rel} != -3.4")
-
-    manifests = _load("h2/*.json")
-    by: dict[str, dict[float, list]] = {}
-    for m in manifests:
-        by.setdefault(m["spec"]["policy"], {}).setdefault(
-            float(m["spec"]["load"]), []).append(
-            m["metrics"]["served_value_fraction"])
-    fig, ax = plt.subplots(figsize=(SINGLE_W, 3.2), layout="constrained")
-    for pol, st in POLICY_STYLE.items():
-        loads = sorted(by[pol])
-        ys = [statistics.median(by[pol][L]) for L in loads]
-        z = 5 if pol == "reservation" else 3
-        ax.plot(loads, ys, color=st["color"], marker=st["marker"], ls=st["ls"],
-                lw=st["lw"], ms=3.5, zorder=z,
-                label=f"{st['label']} (AUC {a['auc'][pol]:.3f})")
-    ax.set_xlabel("offered load (x measured capacity)")
-    ax.set_ylabel("served-value fraction")
-    ax.set_xticks([0.5, 1.0, 1.5, 2.0, 2.5, 3.0])
-    ax.set_ylim(0, 1.02)
-    ax.legend(frameon=False, fontsize=6, ncol=2, loc="lower center",
-              bbox_to_anchor=(0.5, 1.01))
-    _save(fig, "F5_served_value")
-    print("[figures] F5 ASSERT PASS: AUCs match frozen values, relative -3.4%")
 
 
 # --- tables -------------------------------------------------------------------
@@ -457,7 +462,7 @@ def tables_all() -> None:
     ]
     (OUT_TAB / "T2_verdict.tex").write_text("\n".join(t2) + "\n")
 
-    # T3 - H3 absolute rates (computed, asserted against frozen in fig_f3).
+    # T3 - H3 absolute rates (computed, asserted against frozen in fig_f4).
     d3 = h3_deltas(_load("h3/*.json"))
     rows = sorted(d3.items(), key=lambda kv: -max(kv[1]["curve"].values()))
     t3 = [r"\begin{tabular}{lrrrrr}", r"\toprule",
@@ -528,7 +533,7 @@ def main(argv: list[str]) -> None:
         elif t in FIGS:
             FIGS[t]()
         else:
-            print(f"unknown target {t}; use F1..F5 or tables")
+            print(f"unknown target {t}; use F1..F3 or tables")
             sys.exit(1)
 
 

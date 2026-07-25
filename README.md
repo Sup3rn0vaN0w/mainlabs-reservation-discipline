@@ -48,11 +48,26 @@ exits nonzero):
 ```
 python -m sim.analysis.figures F1   # primary comparison; asserts median == -10.3
 python -m sim.analysis.figures F2   # isolation/stranding; asserts the 77/3/1 partition
-python -m sim.analysis.figures F3   # containment; asserts rates == Table 3
-python -m sim.analysis.figures F4   # horizon lesson; asserts population median in [690,730]
-python -m sim.analysis.figures F5   # served value; asserts the seven AUCs
+python -m sim.analysis.figures F3   # served value; asserts the seven AUCs
+python -m sim.analysis.figures F4   # containment; asserts rates == Table 3
+python -m sim.analysis.figures F5   # horizon lesson; asserts population median in [690,730]
 python -m sim.analysis.figures tables   # Tables 1-4 + Appendix D to LaTeX
 ```
+
+### Figure numbering (changed 2026-07-24)
+
+Figures were renumbered to first-citation order. If you are reproducing from
+a copy of this artifact taken before that date, or from an earlier draft of
+the paper, use this mapping. Figure CONTENT, captions, assertions, and every
+underlying number are unchanged; only the identifiers moved.
+
+| content | old number | current number | first cited |
+|---|---|---|---|
+| improvement vs offered load | Figure 1 | Figure 1 | Section 7.1 |
+| isolation and stranding | Figure 2 | Figure 2 | Section 7.2 |
+| served value (H2 load sweep) | Figure 5 | Figure 3 | Section 7.3 |
+| containment and starvation | Figure 3 | Figure 4 | Section 7.4 |
+| horizon censoring | Figure 4 | Figure 5 | Section 8 |
 
 Paper build (four-pass, TeX Live with pdflatex/bibtex):
 
