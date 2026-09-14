@@ -1,0 +1,56 @@
+\section{Supplementary results and figures}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=3.25in]{figures/F1_improvement_vs_load.pdf}
+\caption{Per-cell improvement of the reservation discipline over the best per-cell tuned baseline, across offered load. Each point is one of 108 pre-registered core cells; the heavy line traces the per-load median. The deficit is U-shaped, deepest at nominal provisioning (22.4 to 23.6 percent at 1.0x), and the sign flips past saturation (+0.8 to +3.2 percent at 1.5x). Dashed lines mark the pre-registered WEAK (+5 percent) and SUPPORT (+10 percent) thresholds; no cell reaches SUPPORT. Open symbols mark the four cells failing the interactive guardrail (Section 6.4).}
+\label{fig:improvement}
+\end{figure}
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=3.25in]{figures/F3_served_value.pdf}
+\caption{Served value across the load sweep. The reservation discipline's area under curve (0.626) trails deadline-ordered class scheduling (0.648), killing the graceful-degradation hypothesis; the admission-throttling baselines collapse under overload (Section 6.5).}
+\label{fig:servedvalue}
+\end{figure}
+\begin{figure*}[tbp]
+\centering
+\includegraphics[width=\textwidth]{figures/F2a_interactive_ttft.pdf}
+\caption{Interactive tail latency under reservations. Per-cell p95 time-to-first-token change versus the best baseline: at and above nominal load, reservations improve interactive tail latency by 63.3 to 97.1 percent by keeping agentic flows off the shared pool. The effect inverts in the heavy-agentic, overloaded, short-gap corner, where the guardrail fails by 468.6 to 526.5 percent (Section 6.4).}
+\label{fig:ttft}
+\end{figure*}
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=3.25in]{figures/F2b_reserved_idle.pdf}
+\caption{What that isolation costs. Reserved-idle fraction per cell: the protection of Figure~\ref{fig:ttft} is priced in capacity held idle, 93 to 100 percent of the reserved pool in 77 of 81 cells, with three load-1.5 cells at 88.9 percent and one cell granted no reservations (marked). This is the structural duty-cycle cost of Section 6.5.}
+\label{fig:isolation}
+\end{figure}
+\begin{table*}[tbp]
+\centering
+\small
+\caption{Policy roster and tuned parameters per workload family (corrected-horizon tuning campaign; 8-point equal-budget grids).}
+\label{tab:roster}
+\input{tables/T1_roster}
+\end{table*}
+\begin{table*}[tbp]
+\centering
+\small
+\caption{Pre-registered verdict summary (thresholds fixed 2026-07-06).}
+\label{tab:verdict}
+\input{tables/T2_verdict}
+\end{table*}
+\begin{table*}[tbp]
+\centering
+\footnotesize
+\caption{H3 absolute compliant-flow completion rates at each runaway-injection level, with the worst delta versus the no-injection condition (percentage points).}
+\label{tab:h3}
+\input{tables/T3_h3_rates}
+\end{table*}
+\begin{table*}[tbp]
+\centering
+\footnotesize
+\caption{Service-model sensitivity: measured effect and binding classification per constant.}
+\label{tab:sens}
+\input{tables/T4_sensitivity}
+\end{table*}
+
+\clearpage

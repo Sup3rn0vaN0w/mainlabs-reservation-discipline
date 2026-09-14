@@ -1,4 +1,4 @@
-\begin{thebibliography}{46}
+\begin{thebibliography}{47}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -6,17 +6,17 @@
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
 
 \bibitem[Abhyankar et~al.(2024)Abhyankar, He, Srivatsa, Zhang, and Zhang]{infercept2024}
-Reyna Abhyankar, Zijian He, Vikranth Srivatsa, Hao Zhang, and Yiying Zhang.
+Abhyankar, R., He, Z., Srivatsa, V., Zhang, H., and Zhang, Y.
 \newblock {InferCept}: Efficient intercept support for augmented large language model inference.
 \newblock In \emph{Proceedings of the 41st International Conference on Machine Learning (ICML)}, volume 235 of \emph{Proceedings of Machine Learning Research}, pp.\  81--95, 2024.
 
 \bibitem[Agrawal et~al.(2024)Agrawal, Kedia, Panwar, Mohan, Kwatra, Gulavani, Tumanov, and Ramjee]{sarathi2024}
-Amey Agrawal, Nitin Kedia, Ashish Panwar, Jayashree Mohan, Nipun Kwatra, Bhargav~S. Gulavani, Alexey Tumanov, and Ramachandran Ramjee.
+Agrawal, A., Kedia, N., Panwar, A., Mohan, J., Kwatra, N., Gulavani, B.~S., Tumanov, A., and Ramjee, R.
 \newblock Taming throughput-latency tradeoff in {LLM} inference with {Sarathi-Serve}.
 \newblock arXiv preprint arXiv:2403.02310, 2024.
 
 \bibitem[Agyemang et~al.(2026)Agyemang, Kponyo, Somuah, Amponsah, Boakye, and Agyekum]{hivemind2026}
-Justice~Owusu Agyemang, Jerry~John Kponyo, Obed~Kwasi Somuah, Elliot Amponsah, Godfred Manu~Addo Boakye, and Kwame Opuni-Boachie~Obour Agyekum.
+Agyemang, J.~O., Kponyo, J.~J., Somuah, O.~K., Amponsah, E., Boakye, G. M.~A., and Agyekum, K. O.-B.~O.
 \newblock {HiveMind}: {OS}-inspired scheduling for concurrent {LLM} agent workloads.
 \newblock arXiv preprint arXiv:2604.17111, 2026.
 
@@ -28,45 +28,50 @@ Justice~Owusu Agyemang, Jerry~John Kponyo, Obed~Kwasi Somuah, Elliot Amponsah, G
 \newblock Accessed 2026-07-24.
 
 \bibitem[Baker \& Savola(2004)Baker and Savola]{rfc3704}
-Fred Baker and Pekka Savola.
+Baker, F. and Savola, P.
 \newblock Ingress filtering for multihomed networks.
 \newblock RFC 3704, BCP 84, RFC Editor, March 2004.
 \newblock URL \url{https://www.rfc-editor.org/info/rfc3704}.
 
+\bibitem[Biswas et~al.(2026)Biswas, Goel, S, Mohan, Khare, Parayil, Ramjee, and Bansal]{sutradhara2026}
+Biswas, A., Goel, K., S, S., Mohan, J., Khare, A., Parayil, A., Ramjee, R., and Bansal, C.
+\newblock Sutradhara: An intelligent orchestrator-engine co-design for tool-based agentic inference.
+\newblock arXiv preprint arXiv:2601.12967, 2026.
+
 \bibitem[Blake et~al.(1998)Blake, Black, Carlson, Davies, Wang, and Weiss]{rfc2475}
-Steven Blake, David Black, Mark Carlson, Elwyn Davies, Zheng Wang, and Walter Weiss.
+Blake, S., Black, D., Carlson, M., Davies, E., Wang, Z., and Weiss, W.
 \newblock An architecture for differentiated services.
 \newblock RFC 2475, Informational, RFC Editor, December 1998.
 \newblock URL \url{https://www.rfc-editor.org/info/rfc2475}.
 
 \bibitem[Braden et~al.(1997)Braden, Zhang, Berson, Herzog, and Jamin]{rfc2205}
-Robert Braden, Lixia Zhang, Steven Berson, Shai Herzog, and Sugih Jamin.
+Braden, R., Zhang, L., Berson, S., Herzog, S., and Jamin, S.
 \newblock Resource {ReSerVation} protocol ({RSVP}) -- version 1 functional specification.
 \newblock RFC 2205, Proposed Standard, RFC Editor, September 1997.
 \newblock URL \url{https://www.rfc-editor.org/info/rfc2205}.
 
 \bibitem[Chen et~al.(2026)Chen, Ye, Tang, Sun, Tian, Wang, Li, Wen, Han, and Zhang]{concur2026}
-Qiaoling Chen, Zhisheng Ye, Tian Tang, Peng Sun, Boyu Tian, Guoteng Wang, Shenggui Li, Yonggang Wen, Zhenhua Han, and Tianwei Zhang.
+Chen, Q., Ye, Z., Tang, T., Sun, P., Tian, B., Wang, G., Li, S., Wen, Y., Han, Z., and Zhang, T.
 \newblock {CONCUR}: High-throughput agentic batch inference of {LLM} via congestion-based concurrency control.
 \newblock arXiv preprint arXiv:2601.22705, 2026.
 
 \bibitem[Costa et~al.(2025)Costa, K{\"o}pf, Kolluri, Paverd, Russinovich, Salem, Tople, Wutschitz, and Zanella-B{\'e}guelin]{fides2025}
-Manuel Costa, Boris K{\"o}pf, Aashish Kolluri, Andrew Paverd, Mark Russinovich, Ahmed Salem, Shruti Tople, Lukas Wutschitz, and Santiago Zanella-B{\'e}guelin.
+Costa, M., K{\"o}pf, B., Kolluri, A., Paverd, A., Russinovich, M., Salem, A., Tople, S., Wutschitz, L., and Zanella-B{\'e}guelin, S.
 \newblock Securing {AI} agents with information-flow control.
 \newblock arXiv preprint arXiv:2505.23643, 2025.
 
 \bibitem[Debenedetti et~al.(2025)Debenedetti, Shumailov, Fan, Hayes, Carlini, Fabian, Kern, Shi, Terzis, and Tram{\`e}r]{camel2025}
-Edoardo Debenedetti, Ilia Shumailov, Tianqi Fan, Jamie Hayes, Nicholas Carlini, Daniel Fabian, Christoph Kern, Chongyang Shi, Andreas Terzis, and Florian Tram{\`e}r.
+Debenedetti, E., Shumailov, I., Fan, T., Hayes, J., Carlini, N., Fabian, D., Kern, C., Shi, C., Terzis, A., and Tram{\`e}r, F.
 \newblock Defeating prompt injections by design.
 \newblock arXiv preprint arXiv:2503.18813, 2025.
 
 \bibitem[Dobrin \& Chmiel(2026)Dobrin and Chmiel]{safetykernel2026}
-Seth Dobrin and {\L}ukasz Chmiel.
+Dobrin, S. and Chmiel, {\L}.
 \newblock The unfireable safety kernel: Execution-time {AI} alignment for {AI} agents and other escapable {AI} systems.
 \newblock arXiv preprint arXiv:2606.26057, 2026.
 
 \bibitem[Du et~al.(2026)Du, Huangfu, Luo, Chen, Li, Yu, Fan, and Guo]{goodserve2026}
-Boxiao Du, Boning Huangfu, Yizhou Luo, Chen Chen, Zijun Li, Minchen Yu, Xiaoyi Fan, and Minyi Guo.
+Du, B., Huangfu, B., Luo, Y., Chen, C., Li, Z., Yu, M., Fan, X., and Guo, M.
 \newblock {GoodServe}: Towards high-goodput serving of agentic {LLM} inferences over heterogeneous resources.
 \newblock arXiv preprint arXiv:2605.16867, 2026.
 
@@ -83,41 +88,41 @@ EvalSpec.
 \newblock Frozen 2026-07-06; Amendments 1-3, clarification, and integrity rulings included (EVALSPEC\_RELEASE.md).
 
 \bibitem[Fan et~al.(2026)Fan, Li, Tian, Wang, Li, and Wang]{pact2026}
-Linfeng Fan, Ziwei Li, Yuan Tian, Yichen Wang, Rongsheng Li, and Xiong Wang.
+Fan, L., Li, Z., Tian, Y., Wang, Y., Li, R., and Wang, X.
 \newblock The granularity mismatch in agent security: Argument-level provenance solves enforcement and isolates the {LLM} reasoning bottleneck.
 \newblock arXiv preprint arXiv:2605.11039, 2026.
 
 \bibitem[Ferguson \& Senie(2000)Ferguson and Senie]{rfc2827}
-Paul Ferguson and Daniel Senie.
+Ferguson, P. and Senie, D.
 \newblock Network ingress filtering: Defeating denial of service attacks which employ {IP} source address spoofing.
 \newblock RFC 2827, BCP 38, RFC Editor, May 2000.
 \newblock URL \url{https://www.rfc-editor.org/info/rfc2827}.
 
 \bibitem[Floyd \& Jacobson(1993)Floyd and Jacobson]{floyd1993red}
-Sally Floyd and Van Jacobson.
+Floyd, S. and Jacobson, V.
 \newblock Random early detection gateways for congestion avoidance.
 \newblock \emph{IEEE/ACM Transactions on Networking}, 1\penalty0 (4):\penalty0 397--413, August 1993.
 
-\bibitem[Goel et~al.(2025)Goel, Mohan, Kwatra, Anupindi, and Ramjee]{niyama2025}
-Kanishk Goel, Jayashree Mohan, Nipun Kwatra, Ravi~Shreyas Anupindi, and Ramachandran Ramjee.
-\newblock Niyama: Breaking the silos of {LLM} inference serving.
-\newblock arXiv preprint arXiv:2503.22562, 2025.
+\bibitem[Goel et~al.(2026)Goel, Mohan, Kwatra, Anupindi, and Ramjee]{niyama2025}
+Goel, K., Mohan, J., Kwatra, N., Anupindi, R.~S., and Ramjee, R.
+\newblock {QoServe}: Breaking the silos of {LLM} inference serving.
+\newblock In \emph{Proceedings of the ACM International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS)}, Pittsburgh, PA, USA, 2026.
 
 \bibitem[Gupta(2026)]{mozilla2026}
-Anushri Gupta.
+Gupta, A.
 \newblock What is an {LLM} control plane?
 \newblock Mozilla.ai Blog, June 2026.
 \newblock URL \url{https://blog.mozilla.ai/what-is-an-llm-control-plane/}.
 \newblock Published 2026-06-12.
 
 \bibitem[Heinanen et~al.(1999)Heinanen, Baker, Weiss, and Wroclawski]{rfc2597}
-Juha Heinanen, Fred Baker, Walter Weiss, and John Wroclawski.
+Heinanen, J., Baker, F., Weiss, W., and Wroclawski, J.
 \newblock Assured forwarding {PHB} group.
 \newblock RFC 2597, Proposed Standard, RFC Editor, June 1999.
 \newblock URL \url{https://www.rfc-editor.org/info/rfc2597}.
 
 \bibitem[Inan et~al.(2023)Inan, Upasani, Chi, Rungta, Iyer, Mao, Tontchev, Hu, Fuller, Testuggine, and Khabsa]{llamaguard2023}
-Hakan Inan, Kartikeya Upasani, Jianfeng Chi, Rashi Rungta, Krithika Iyer, Yuning Mao, Michael Tontchev, Qing Hu, Brian Fuller, Davide Testuggine, and Madian Khabsa.
+Inan, H., Upasani, K., Chi, J., Rungta, R., Iyer, K., Mao, Y., Tontchev, M., Hu, Q., Fuller, B., Testuggine, D., and Khabsa, M.
 \newblock Llama guard: {LLM}-based input-output safeguard for human-{AI} conversations.
 \newblock arXiv preprint arXiv:2312.06674, 2023.
 
@@ -128,17 +133,17 @@ Hakan Inan, Kartikeya Upasani, Jianfeng Chi, Rashi Rungta, Krithika Iyer, Yuning
 \newblock URL \url{https://www.intel.com/content/dam/www/public/us/en/documents/product-briefs/ipmi-second-gen-interface-spec-v2-rev1-1.pdf}.
 
 \bibitem[Kwon et~al.(2023)Kwon, Li, Zhuang, Sheng, Zheng, Yu, Gonzalez, Zhang, and Stoica]{vllm2023}
-Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody~Hao Yu, Joseph~E. Gonzalez, Hao Zhang, and Ion Stoica.
+Kwon, W., Li, Z., Zhuang, S., Sheng, Y., Zheng, L., Yu, C.~H., Gonzalez, J.~E., Zhang, H., and Stoica, I.
 \newblock Efficient memory management for large language model serving with {PagedAttention}.
 \newblock In \emph{Proceedings of the 29th Symposium on Operating Systems Principles (SOSP)}, 2023.
 
 \bibitem[Lee et~al.(2025)Lee, Kim, and Park]{killbench2025}
-Sechan Lee, Hyounghun Kim, and Sangdon Park.
+Lee, S., Kim, H., and Park, S.
 \newblock Can we stop malicious {AI}? {KILLBENCH}: A benchmark for external {AI} kill switch feasibility.
 \newblock arXiv preprint arXiv:2511.13725, 2025.
 
 \bibitem[Li et~al.(2025)Li, He, Mang, Zhang, Mao, Chen, Zhou, Cheung, Gonzalez, and Stoica]{continuum2025}
-Hanchen Li, Runyuan He, Qiuyang Mang, Qizheng Zhang, Huanzhi Mao, Xiaokun Chen, Hangrui Zhou, Alvin Cheung, Joseph Gonzalez, and Ion Stoica.
+Li, H., He, R., Mang, Q., Zhang, Q., Mao, H., Chen, X., Zhou, H., Cheung, A., Gonzalez, J., and Stoica, I.
 \newblock Continuum: Efficient and robust multi-turn {LLM} agent scheduling with {KV} cache time-to-live.
 \newblock arXiv preprint arXiv:2511.02230, 2025.
 
@@ -150,12 +155,12 @@ Hanchen Li, Runyuan He, Qiuyang Mang, Qizheng Zhang, Huanzhi Mao, Xiaokun Chen, 
 \newblock Accessed 2026-07-24; per-session iteration and dollar budgets enforced at the gateway.
 
 \bibitem[Luo et~al.(2025)Luo, Shi, Cai, Zhang, Wong, Wang, Wang, Huang, Chen, Gonzalez, and Stoica]{autellix2025}
-Michael Luo, Xiaoxiang Shi, Colin Cai, Tianjun Zhang, Justin Wong, Yichuan Wang, Chi Wang, Yanping Huang, Zhifeng Chen, Joseph~E. Gonzalez, and Ion Stoica.
+Luo, M., Shi, X., Cai, C., Zhang, T., Wong, J., Wang, Y., Wang, C., Huang, Y., Chen, Z., Gonzalez, J.~E., and Stoica, I.
 \newblock Autellix: An efficient serving engine for {LLM} agents as general programs.
 \newblock arXiv preprint arXiv:2502.13965, 2025.
 
 \bibitem[Maloyan \& Namiot(2026)Maloyan and Namiot]{provgates2026}
-Narek Maloyan and Dmitry Namiot.
+Maloyan, N. and Namiot, D.
 \newblock Sleeper channels and provenance gates: Persistent prompt injection in always-on autonomous {AI} agents.
 \newblock arXiv preprint arXiv:2605.13471, 2026.
 
@@ -174,12 +179,12 @@ Narek Maloyan and Dmitry Namiot.
 \newblock Accessed 2026-07-24.
 
 \bibitem[Ousterhout(1982)]{gang_scheduling}
-John~K. Ousterhout.
+Ousterhout, J.~K.
 \newblock Scheduling techniques for concurrent systems.
 \newblock In \emph{Proceedings of the Third International Conference on Distributed Computing Systems (ICDCS)}, pp.\  22--30, 1982.
 
 \bibitem[Santos-Grueiro(2026)]{cxi2026}
-Igor Santos-Grueiro.
+Santos-Grueiro, I.
 \newblock Context-to-execution integrity for {LLM} agents.
 \newblock arXiv preprint arXiv:2607.06000, 2026.
 
@@ -191,17 +196,17 @@ Igor Santos-Grueiro.
 \newblock Accessed 2026-07-24.
 
 \bibitem[Shan et~al.(2025)Shan, Gupta, Xu, Shi, Zhang, Wang, Xu, Kang, Liu, Zhang, Zhu, Jin, Lim, Chen, Chen, Liu, Chen, Yin, Chung, Jiang, Lu, Chen, Lin, Xiang, Shi, and Xie]{aibrix2025}
-Jiaxin Shan, Varun Gupta, Le~Xu, Haiyang Shi, Jingyuan Zhang, Ning Wang, Linhui Xu, Rong Kang, Tongping Liu, Yifei Zhang, Yiqing Zhu, Shuowei Jin, Gangmuk Lim, Binbin Chen, Zuzhi Chen, Xiao Liu, Xin Chen, Kante Yin, Chak-Pong Chung, Chenyu Jiang, Yicheng Lu, Jianjun Chen, Caixue Lin, Wu~Xiang, Rui Shi, and Liguang Xie.
+Shan, J., Gupta, V., Xu, L., Shi, H., Zhang, J., Wang, N., Xu, L., Kang, R., Liu, T., Zhang, Y., Zhu, Y., Jin, S., Lim, G., Chen, B., Chen, Z., Liu, X., Chen, X., Yin, K., Chung, C.-P., Jiang, C., Lu, Y., Chen, J., Lin, C., Xiang, W., Shi, R., and Xie, L.
 \newblock {AIBrix}: Towards scalable, cost-effective large language model inference infrastructure.
 \newblock arXiv preprint arXiv:2504.03648, 2025.
 
 \bibitem[Su et~al.(2025)Su, Zhang, Lan, Wang, Shen, Yang, and Cheng]{morphserve2025}
-Zhaoyuan Su, Zeyu Zhang, Tingfeng Lan, Zirui Wang, Haiying Shen, Juncheng Yang, and Yue Cheng.
+Su, Z., Zhang, Z., Lan, T., Wang, Z., Shen, H., Yang, J., and Cheng, Y.
 \newblock {MorphServe}: Efficient and workload-aware {LLM} serving via runtime quantized layer swapping and {KV} cache resizing.
 \newblock arXiv preprint arXiv:2506.02006, 2025.
 
 \bibitem[Sun et~al.(2024)Sun, Huang, Zhao, Xiao, Zhang, Li, and Lin]{llumnix2024}
-Biao Sun, Ziming Huang, Hanyu Zhao, Wencong Xiao, Xinyi Zhang, Yong Li, and Wei Lin.
+Sun, B., Huang, Z., Zhao, H., Xiao, W., Zhang, X., Li, Y., and Lin, W.
 \newblock Llumnix: Dynamic scheduling for large language model serving.
 \newblock In \emph{18th USENIX Symposium on Operating Systems Design and Implementation (OSDI)}, 2024.
 
@@ -213,49 +218,49 @@ Biao Sun, Ziming Huang, Hanyu Zhao, Wencong Xiao, Xinyi Zhang, Yong Li, and Wei 
 \newblock Accessed 2026-07-24.
 
 \bibitem[Wadlom et~al.(2026)Wadlom, Shen, and Lu]{helium2026}
-Noppanat Wadlom, Junyi Shen, and Yao Lu.
+Wadlom, N., Shen, J., and Lu, Y.
 \newblock Efficient {LLM} serving for agentic workflows: A data systems perspective.
 \newblock arXiv preprint arXiv:2603.16104, 2026.
 
 \bibitem[Wallace et~al.(2024)Wallace, Xiao, Leike, Weng, Heidecke, and Beutel]{wallace2024}
-Eric Wallace, Kai Xiao, Reimar Leike, Lilian Weng, Johannes Heidecke, and Alex Beutel.
+Wallace, E., Xiao, K., Leike, R., Weng, L., Heidecke, J., and Beutel, A.
 \newblock The instruction hierarchy: Training {LLMs} to prioritize privileged instructions.
 \newblock arXiv preprint arXiv:2404.13208, 2024.
 
 \bibitem[Wang(2026)]{truefoundry2026}
-Boyu Wang.
+Wang, B.
 \newblock Governing multi-agent systems: Agent identity, {A2A}, and the agent gateway.
 \newblock TrueFoundry Blog, June 2026.
 \newblock URL \url{https://www.truefoundry.com/blog/multi-agent-a2a-governance-gateway}.
 \newblock Published 2026-06-19.
 
 \bibitem[Wang et~al.(2026)Wang, Ye, Xu, Guo, Wei, Wang, Li, Chen, Li, Zhuo, and Chen]{mars2026}
-Yifei Wang, Hancheng Ye, Yechen Xu, Cong Guo, Chiyue Wei, Qinsi Wang, Dongting Li, Tingjun Chen, Hai Li, Danyang Zhuo, and Yiran Chen.
+Wang, Y., Ye, H., Xu, Y., Guo, C., Wei, C., Wang, Q., Li, D., Chen, T., Li, H., Zhuo, D., and Chen, Y.
 \newblock {MARS}: Efficient, adaptive co-scheduling for heterogeneous agentic systems.
 \newblock arXiv preprint arXiv:2604.26963, 2026.
 
-\bibitem[Wu et~al.(2026)Wu, Ding, Huang, and Zhao]{memcurate2026}
-Beining Wu, Zihao Ding, Jun Huang, and Yanxiao Zhao.
-\newblock Forget to improve: On-device {LLM}-agent continual learning via budget-curated memory.
-\newblock arXiv preprint arXiv:2606.25115, 2026.
-
 \bibitem[Wu et~al.(2023)Wu, Zhong, Zhang, Liu, Liu, Sun, Huang, Liu, and Jin]{wu2023fastserve}
-Bingyang Wu, Yinmin Zhong, Zili Zhang, Shengyu Liu, Fangyue Liu, Yuanhang Sun, Gang Huang, Xuanzhe Liu, and Xin Jin.
+Wu, B., Zhong, Y., Zhang, Z., Liu, S., Liu, F., Sun, Y., Huang, G., Liu, X., and Jin, X.
 \newblock Fast distributed inference serving for large language models.
 \newblock arXiv preprint arXiv:2305.05920, 2023.
 
+\bibitem[Wu et~al.(2026)Wu, Ding, Huang, and Zhao]{memcurate2026}
+Wu, B., Ding, Z., Huang, J., and Zhao, Y.
+\newblock Forget to improve: On-device {LLM}-agent continual learning via budget-curated memory.
+\newblock arXiv preprint arXiv:2606.25115, 2026.
+
 \bibitem[Yuan et~al.(2026)Yuan, Zeng, Gao, Yu, Liao, and Wang]{unschedulable2026}
-Renzhong Yuan, Yijun Zeng, Xiaosong Gao, Linxi Yu, Haochun Liao, and Han Wang.
+Yuan, R., Zeng, Y., Gao, X., Yu, L., Liao, H., and Wang, H.
 \newblock Scheduling the unschedulable: Taming black-box {LLM} inference at scale.
 \newblock arXiv preprint arXiv:2604.06970, 2026.
 
 \bibitem[Zhong et~al.(2025)Zhong, Chen, Wang, McCall, Titzer, Miller, and Gibbons]{rtbas2025}
-Peter~Yong Zhong, Siyuan Chen, Ruiqi Wang, McKenna McCall, Ben~L. Titzer, Heather Miller, and Phillip~B. Gibbons.
+Zhong, P.~Y., Chen, S., Wang, R., McCall, M., Titzer, B.~L., Miller, H., and Gibbons, P.~B.
 \newblock {RTBAS}: Defending {LLM} agents against prompt injection and privacy leakage.
 \newblock arXiv preprint arXiv:2502.08966, 2025.
 
 \bibitem[Zou et~al.(2024)Zou, Phan, Wang, Duenas, Lin, Andriushchenko, Wang, Kolter, Fredrikson, and Hendrycks]{zou2024circuitbreakers}
-Andy Zou, Long Phan, Justin Wang, Derek Duenas, Maxwell Lin, Maksym Andriushchenko, Rowan Wang, Zico Kolter, Matt Fredrikson, and Dan Hendrycks.
+Zou, A., Phan, L., Wang, J., Duenas, D., Lin, M., Andriushchenko, M., Wang, R., Kolter, Z., Fredrikson, M., and Hendrycks, D.
 \newblock Improving alignment and robustness with circuit breakers.
 \newblock arXiv preprint arXiv:2406.04313, 2024.
 

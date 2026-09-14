@@ -18,3 +18,30 @@ H2 (served-value AUC over the load sweep) and H3 (compliant completion-rate delt
 under runaway injection) shape the papers only, never the filing.
 
 Run: `make h1-readout` (after the grid has produced manifests).
+
+## Figures and tables
+
+- `figures.py` - every figure and table in the paper, each derived from the
+  MANIFESTS via this analysis code rather than from readout markdown, with two
+  spec'd exceptions carried as data blocks in the module (F5's horizon-deficit
+  series and T4's sensitivity rows). Captions are FINAL PROSE and live in the
+  LaTeX sources; this module renders images only.
+
+EVERY FIGURE ASSERTS AGREEMENT WITH THE FROZEN PAPER NUMBERS BEFORE IT WRITES.
+An assertion failure exits non-zero and is a STOP-and-escalate, never a silent
+redraw, and the assertions travel with a figure's CONTENT rather than its
+number so a renumbering cannot rebind a check.
+
+| command | figure | assertion |
+|---|---|---|
+| `make fig-F1` | per-cell improvement vs offered load | computed median improvement == -10.3 percent |
+| `make fig-F2a` | interactive p95 TTFT change per cell | 77 guardrail-holding cells at or above nominal, improvement band 63.3 to 97.1, inversion corner 468.6 to 526.5 over 3 cells |
+| `make fig-F2b` | reserved-idle fraction per cell | partition (in [93,100], in [88,90], zero-reservation) == (77, 3, 1) |
+| `make fig-F3` | served value over the load sweep | AUCs match the frozen values, relative -3.4 percent |
+| `make fig-F4` | containment and starvation | rates match the frozen T3 table exactly |
+| `make fig-F5` | horizon censoring | population median lifetime in [690, 730] and completable-at-200s in [23, 26] |
+| `make tables-all` | T1 to T4 and the 108-row Appendix H table | values recomputed from the manifest set |
+| `make figures` | all of the above | all of the above |
+
+Outputs land in `analysis/figures/` as vector PDF plus a PNG preview, and in
+`analysis/tables/` as LaTeX fragments the paper `\input`s.

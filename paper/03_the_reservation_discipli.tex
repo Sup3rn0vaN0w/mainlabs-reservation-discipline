@@ -1,0 +1,72 @@
+\section{The reservation discipline}
+
+The discipline adds one object and one decision to the serving stack. The
+object is the reservation: a ledger entry binding a flow to a guaranteed
+resource vector for a lifetime. The decision is admission: whether a flow
+enters the small reserved subset, enters an aggregate service class, or is
+declined early. Everything else in this section is the precise semantics
+of those two things, together with the supervisory and trust elements that
+complete the contract. We emphasize at the outset what the discipline
+keeps: the gateway accounting of Section 2 remains the identity and
+metering substrate, and the scheduling engines of Section 2 remain the
+execution machinery. The discipline sits at admission and constrains what
+those layers may do to an admitted flow; it replaces neither.
+
+A flow arrives with a descriptor: an estimated invocation count, a
+requested cumulative output-token budget, an estimated cache footprint, a
+service class, and a provenance class. Admission to the reserved subset
+requires five conditions jointly, of which the load-bearing ones are that
+the subset holds fewer than K flows, that projected commitment over a
+forecast window stays under a configured ceiling, and that some device
+set can hold the flow's cache footprint under the pinning rules. A flow
+failing any condition is served in an aggregate class or declined early,
+which is the cheapest moment in a flow's life to say no.
+
+An admitted reservation covers three resources jointly, and the jointness
+is the point, because a flow starved on any one of them fails entirely: a
+compute share sufficient for its class latency budget, a cumulative
+output-token budget metered at decode across every invocation of the
+flow, and key-value cache pinned against eviction and migration for the
+reservation lifetime, including across the idle gaps between invocations.
+The budget is simultaneously a floor and a bound. Budgeted capacity is
+committed, so the flow cannot be silently starved out of it, and the flow
+cannot exceed it, so a runaway is a contained event rather than a
+discovered one. Pinning has two embodiments, strict and tiered, the
+latter spilling to a guaranteed restore path between invocations; the
+evaluation prices both without favour.
+
+The guarantee is stated negatively, and the reason is a claim about
+auditability rather than style: for the reservation lifetime, no
+resource-motivated action of the serving stack may preempt the flow's
+invocations, evict or migrate its pinned cache, or reclaim its committed
+budget. A prohibition can be audited for violations; a permission cannot
+be audited for its non-occurrence. The sole override is a halt issued by
+the management plane, which is a safety revocation under designated
+authority and definitionally not scheduler preemption, since no capacity
+condition can trigger it. A guarantee with a capacity-triggered escape
+clause is a priority, and priorities are what the schedulers of Section 2
+already have.
+
+All other traffic runs in aggregate service classes with latency budgets
+and scheduling weights, degraded under pressure by a probabilistic ladder
+whose probability is keyed to committed headroom computed from the
+reservation ledger rather than to observed queue depth. That keying is a
+design claim the evaluation tests directly, not an assumption it rests
+on.
+
+Two elements complete the contract and were never economic claims. A
+management plane holds pre-authorized halt, steer, and escalate
+authority in a failure and trust domain separate from the inference
+stack, which yields four properties that hold by construction: admission
+is where organizational policy binds to a flow, the budget fixes any
+runaway's worst case in advance rather than in an incident review, the
+reservation ledger is the audit record, and the halt does not route
+through the model being doubted. Two of the four are measured here
+rather than asserted: Section 6 reports what the budget does under
+adversarial injection, and what the difference between a priority and a
+contract costs the flows subject to it. Trust-keyed admission gates
+reservation eligibility on the provenance of the content driving a flow,
+fixed before that content is interpreted. Appendix A carries the full
+specification: the admission test, the ledger invariants, the
+budget-exhaustion vocabulary, lease and multi-tenant semantics, and the
+survivability embodiment.

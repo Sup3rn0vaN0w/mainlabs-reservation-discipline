@@ -1,82 +1,71 @@
 \section{Introduction}
 
-Serving infrastructure for large language models is reorganizing into
-separated planes: a data plane that executes inference, a control plane
-that governs admission, routing, and placement, and a management layer for
-configuration and observation. The control planes shipping today provide
-gateways, rate limits, per-request and per-session budget caps, priority
-scheduling with preemption, and account-level reserved throughput. A
-growing class of workloads arrives beneath this layer in a shape it was
-not built for: long-horizon agentic flows, units of work with stable
-identity across many model invocations, accumulating state whose loss
-destroys progress, idling between invocations while tools run, and
-delivering value only at completion. This paper specifies a serving
-discipline built for such flows, a completion-oriented resource contract
-granted at admission, and then does to it what proposals are rarely made
-to endure: evaluates it under a specification frozen before the
-evaluation system existed, with published thresholds under which the
-proposal's central claim dies.
+Serving systems for large language models schedule work as preemptible
+requests. A growing class of workloads arrives in a different shape:
+long-horizon agentic flows, units of work with stable identity across
+many model invocations, accumulating cache and tool state whose loss
+destroys progress, idling between invocations while tools and humans
+respond, and delivering value only at completion. This paper specifies a
+serving discipline built for such flows, a completion-oriented resource
+contract granted at admission, and evaluates it under a specification
+frozen before the evaluation system existed, with published thresholds
+under which the proposal's central claim dies. The discipline is not
+invented from first principles: each element transfers a lesson packet
+networking paid for, rationed per-flow guarantees over aggregate
+classes, early probabilistic class-aware shedding, fate-independent
+supervision, and provenance-bound authority at the edge. One transfer is
+deliberately incomplete, since the discipline keys shedding to a ledger
+of forward commitments rather than to queue depth, and Appendix D gives
+the four lessons in full with the expanded transfer table.
 
-It dies. The discipline's economic claim, that per-flow completion
-guarantees buy more completed work per provisioned GPU-hour than they
-strand, loses a median 10.3 percent to the best of six equally tuned
-baselines across a 108-cell pre-registered grid, supporting the
-hypothesis in 0 of 108 cells; a second hypothesis, that degradation keyed
-to committed capacity degrades more gracefully under overload than
-deterministic demotion, is likewise killed, reversing sign when a
-measurement artifact was corrected. The cost is structural: an agentic
-flow idles in tool time at roughly a 5 percent duty cycle, so capacity
-reserved for it is stranded at least 88 percent regardless of configuration,
-and the deficit peaks exactly at nominal provisioning, where a
-well-provisioned fleet's work-conserving schedulers are at their best.
+The evaluation begins somewhere unexpected. Under a mixed workload at
+moderate overload, the two strongest request-oriented baselines in our
+set complete zero compliant agentic flows, scheduling 1 of 107 and
+preempting none: admission starvation, not preemption churn. That
+failure is also invisible to the audit mechanisms being specified for
+agentic systems, because those mechanisms record events and this failure
+consists of their absence. Investigating it exposed a measurement
+artifact in our own campaign, a horizon shorter than the workload's flow
+lifetimes, which right-censors completion metrics and, less obviously,
+corrupts baseline tuning. Correcting it changed what the primary
+comparison measured.
 
-The mechanism makes two kinds of claims, and the verdict divides them.
-The economic claims are tested and killed, and this paper reports the
-kill with its full history, including the amendments and integrity
-interventions that cut in both directions on the way to it. The
-enforcement and architectural claims, that a reservation-holding control
-plane gives an organization admission where policy binds, a budget that
-contains any runaway to a number fixed in advance, an audit ledger, and a
-kill authority that does not route through the model being doubted, were
-never throughput claims; two of them are measured here in the mechanism's
-favor, and the rest hold by construction. What the evaluation removes is
-the ability to sell those properties as free; what it establishes is
-their price.
+The corrected comparison kills the proposal. Across 108 pre-registered
+cells against six equally tuned baselines at identical simulated
+hardware, reservation-based serving loses a median 10.3 percent of
+goodput per provisioned GPU-hour and supports the hypothesis in 0 of 108
+cells; the secondary graceful-degradation hypothesis is likewise killed,
+reversing sign once the horizon was corrected. The cost is structural
+rather than configurational. An agentic flow runs a short invocation and
+then waits in tool time, a duty cycle of roughly 5 percent by
+construction, so reserved capacity is stranded 88 to 95 percent
+regardless of configuration, and the deficit peaks exactly at nominal
+provisioning where work-conserving schedulers are at their best.
 
-The evaluation's yield exceeds its verdict, and the findings survive it.
-Under adversarial runaway injection, the discipline completes half of all
-compliant agentic flows with a bounded three-point degradation, while the
-two strongest request-oriented baselines complete none: instrumented
-admission starvation, one of 107 compliant flows ever scheduled, with
-zero preemptions, the priority-versus-contract distinction converted from
-argument to table. Reservations improve interactive tail latency by 63 to 97 percent across most of the region, isolation priced in stranding, with
-one measured corner where it inverts. The sign of the primary comparison
-flips in the mechanism's favor past saturation, locating the regime
-boundary where guarantees begin to pay. And the evaluation itself
-produced a measurement lesson for a benchmark category now multiplying:
-horizons shorter than the workload's flow lifetimes silently corrupt both
-completion metrics and baseline tuning, and we give the quantified bias
-and the structural fix.
-
-This paper makes five contributions. First, a complete serving-layer
-discipline for long-horizon agentic flows, specified to implementation
-depth: jointly guaranteed reservations over compute, a cumulative
-cross-invocation token budget, and pinned cache; a hard non-preemption
-guarantee; a bounded reserved subset over aggregate classes; degradation
-keyed to committed headroom; a management plane with authority and
-availability independent of the inference stack; and trust-keyed
-admission, each element the deliberate transfer of a lesson packet
-networking paid for (Section 3). Second, the first controlled comparison
-of completion-oriented versus preemption-oriented scheduling for such
-workloads: seven policies on identical simulated hardware with
-byte-identical workload realizations per cell, under an equal-budget
-tuning protocol enforced by test. Third, the quantified decomposition of
-what completion guarantees cost and what they buy: stranding, isolation,
-containment, and the load boundary, each measured. Fourth, the measured
-starvation result for request-oriented scheduling under agentic load.
-Fifth, the horizon-censoring finding with its structural fix. The
-pre-registration machinery, frozen thresholds, a numbered amendment log,
-an input-domain guard on the verdict path, and the release of every
-artifact including superseded readouts, is described as method, because
-for a paper whose headline is its own proposal's death, the method is the
-product.
+What the guarantees buy is measured rather than argued away: interactive
+tail latency improves by 63.3 to 97.1 percent across most of the region,
+an isolation operators currently purchase by overprovisioning and that
+the discipline prices in stranded capacity instead; runaway flows are
+contained to a bounded degradation; and past saturation the sign of the
+primary comparison flips. The mechanism's enforcement properties were
+never throughput claims, and two of them are measured here: the budget
+contains a runaway to a bound fixed at admission, and the distinction
+between a priority and a contract shows up as 106 of 107 compliant flows
+starved under the former and half completed under the latter. What the
+evaluation removes is the ability to sell any of it as free. This paper
+contributes: a serving-layer discipline for long-horizon agentic flows,
+specified to the depth required to judge its evaluation (Section 3, with
+the full specification in Appendix A); the first controlled comparison
+of completion-oriented against preemption-oriented scheduling for such
+workloads, seven policies on identical hardware with byte-identical
+workload realizations per cell under an equal-budget tuning protocol
+enforced by test (Sections 4 to 6); a measured starvation result for
+request-oriented scheduling under agentic load, with its observability
+consequence (Section 6.1); a measurement-methodology finding with a
+structural fix, quantified (Section 6.2); and a quantified decomposition
+of what completion guarantees cost and what they buy (Sections 6.3 to
+6.6). The pre-registration machinery, frozen thresholds, a numbered
+amendment log, an input-domain guard on the verdict path, and the
+release of every artifact including superseded readouts, is described as
+method, because for a paper whose headline is its own proposal's death
+the method is the product.

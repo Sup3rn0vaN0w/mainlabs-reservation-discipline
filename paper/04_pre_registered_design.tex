@@ -1,0 +1,59 @@
+\section{Pre-registered design}
+
+The evaluation specification was frozen on 2026-07-06, before any simulator
+code existed, and committed to an append-only repository; the frozen text
+with its complete amendment log is released with this paper \citep{evalspec2026}.
+This section restates its commitments; the specification governs where they
+differ.
+
+Primary metric. Task-level goodput per provisioned GPU-hour: value-weighted
+completed flows per hour, normalized by provisioned capacity. The
+normalization is the honesty mechanism: capacity a reservation holds idle
+lowers the discipline's own score arithmetically, so stranding, the
+mechanism's known cost, is priced inside the headline number rather than
+negotiated beside it. Value weights are fixed in the specification and
+varied only in a declared sensitivity sweep. Related serving metrics score
+completed requests against latency targets \citep{mars2026}; ours differs in unit
+and denominator, flow completions valued per provisioned GPU-hour, so that
+held-but-idle guarantees are charged to the discipline that holds them.
+
+Thresholds, fixed before data. Support required a median improvement of at
+least 10 percent over the best baseline, selected per cell as the strongest
+tuned opponent in that cell (deliberately conservative against the
+mechanism), across at least 60 percent of the core region, with
+interactive-traffic p95 time-to-first-token degradation held under 5
+percent. Below 5 percent median improvement, or on guardrail violation
+across the region: kill. Between: a weak result. The verdict is computed
+mechanically by released code as a pure function of the run manifests.
+
+Region. The core region spans interactive-to-agentic traffic mixes (90/10,
+70/30, 50/50 by token volume), offered loads 0.7 to 1.5 times measured
+capacity, idle-gap distributions with medians of 20, 60, and 300 seconds,
+and cluster sizes of 8 to 32 devices (Amendment 3, below). Corner cells
+were pre-declared excluded; none required exclusion in the final grid.
+
+Baselines and fairness. Six baselines: vLLM-style priority scheduling
+with preemption and paged cache \citep{vllm2023}; FastServe-style multi-level
+feedback queues \citep{wu2023fastserve}; Niyama-style deadline-aware class
+scheduling, implemented here with a deterministic demotion ladder
+\citep{niyama2025}; CONCUR-style AIMD admission with pause/resume
+\citep{concur2026}; a MARS-style external admission controller with
+cost-benefit cache retention \citep{mars2026}, added by Amendment 1; and FCFS
+continuous batching as the no-control floor. Every tunable policy,
+including ours, received an identical tuning budget: an 8-point
+pre-registered grid, tuned per workload family on validation seeds and
+scored on disjoint held-out seeds, with a build-failing test asserting
+no policy's grid is larger than any other's. Each baseline is a
+policy-family abstraction rather than a reimplementation of any single
+system: the families are named for the work that characterises them, and
+the comparison is against the scheduling discipline each represents. The
+tuned parameters and both scores are released (Table~\ref{tab:roster}, in Appendix G).
+
+The registration carries three numbered amendments and one integrity
+ruling, each dated, reasoned, and adopted before the final grid ran: a
+baseline added because a negative headline makes baseline completeness
+load-bearing, a measurement horizon corrected, and the grid's device axis
+reduced after measured infeasibility. All were adopted under a one-fix
+clause barring any further measurement correction in either direction,
+which is why the verdict below stands as computed; Appendix E gives the
+log in full.

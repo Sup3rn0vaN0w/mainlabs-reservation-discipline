@@ -1,7 +1,112 @@
-\section{Per-cell H1 results}
+\section{Networking transfers: the four lessons and the expanded transfer table}
 
-Per-cell H1 results, machine-generated from the FINAL readout (cell, best baseline, improvement, 95 percent CI, guardrail; all 108 cells).
 
-{\footnotesize
-\input{tables/appendix_D_cells}
-}
+
+\subsection{The four lessons}
+
+Resource management under the tension between per-unit guarantees and
+aggregate efficiency is the central design problem of packet networking's
+middle decades, and the field's resolutions were expensive: standardized
+architectures were built, deployed at scale, and abandoned before the
+surviving doctrine settled. Four of those lessons transfer to the serving
+layer, and the discipline of Section 3 is their deliberate transfer. We
+state each in its original setting, because the failure modes that
+produced them are already visible, in miniature, in the systems of
+Section 2.
+
+Lesson one: per-flow guarantees do not scale to all flows, so guarantee
+few and aggregate the rest. The Integrated Services architecture offered
+end-to-end per-flow reservations, signaled by RSVP, to any flow that
+asked \citep{rfc2205}; it failed in deployment substantially because per-flow
+state in every element of the path could not scale. Its successor
+inverted the design: Differentiated Services keeps per-flow complexity at
+the edge and gives the core only a small set of aggregate classes
+\citep{rfc2475}. The surviving doctrine is neither ``no guarantees'' nor
+``guarantees for all''; it is guarantees rationed to the few flows whose
+requirements justify per-flow state, with class-based service for the
+remainder. Section 3 adopts this shape directly: a deliberately bounded
+reserved subset, and aggregate classes for everything else.
+
+Lesson two: load shedding is a design surface, and it should act early,
+probabilistically, and per class. Random Early Detection drops packets
+with a probability that rises as smoothed queue occupancy grows, before
+the queue is full, precisely so that overload is signaled gradually
+rather than discovered at exhaustion \citep{floyd1993red}; its
+class-differentiated descendants shed lower-precedence traffic first
+within the same discipline \citep{rfc2597}. The alternative, tail drop at a
+full buffer, produces synchronized collapse and serves the most recent
+arrival as badly as the most important one. Section 2's schedulers shed
+load today, but deterministically and at the cliff: demotion at a
+deadline, rejection at a ceiling, preemption at exhaustion. Section 3
+transfers the early-probabilistic-per-class shape, with one deliberate
+change of signal: the serving layer possesses a quantity networks lack, a
+ledger of forward commitments, and Section 3 keys the shedding
+probability to committed headroom rather than to observed queue state.
+
+Lesson three: the plane that supervises a system must not share fate with
+the system it supervises. Operators reach a wedged or compromised machine
+through a management path that is powered, connected, and authenticated
+independently of the machine's own stack: the baseboard management
+controller and its descendants \citep{ipmi_spec}. The design premise is
+unconditional: the moment supervision runs inside the thing supervised,
+every failure of the thing is potentially a failure of its supervision,
+and the cases where supervision matters most are exactly the cases where
+the system is least trustworthy. Today's model-level oversight, guard
+models in the pipeline, self-critique in the context, probes in the
+process, sits inside the supervised stack. Section 3 transfers the
+doctrine: a management plane whose authority and availability are
+independent of the inference infrastructure, whatever signals it consumes
+from within.
+
+Lesson four: bind authority to provenance at the edge, not to content
+downstream. Networks learned to discard traffic whose claimed origin does
+not match the path it arrived by, at the ingress edge, before that
+traffic can spend the network's resources or authority \citep{rfc2827,rfc3704}. The alternative, judging packets by their payloads deeper in
+the network, loses to any adversary who can forge plausible content,
+which is every adversary. The serving-layer analog is stated carefully in
+Section 3, because content-level defenses for language models are an
+active field with real results; the transfer claims only the resource
+half: whatever a flow's content says, the provenance class assigned at
+admission should bound what capacity and authority the flow can hold.
+
+One table summarizes the mapping: rationed per-flow guarantees over
+aggregate classes $\to$ the bounded reserved subset; early probabilistic
+class-aware shedding $\to$ headroom-keyed degradation; fate-independent
+supervision $\to$ the management plane; provenance-bound authority at the
+edge $\to$ trust-keyed admission. The transfers hold at the granularity
+where they are claimed, the flow, where a control decision is cheap
+relative to the minutes or hours of work it governs; they fail at
+per-token or per-layer granularity, where the decision rivals the work;
+and flows are not packets, since a flow's accumulated state entangles it
+with the machinery serving it in ways a datagram never is. The lessons
+are a design inheritance, bought at someone else's expense, and the
+discipline that follows spends it. The evaluation that follows the
+discipline then tests whether the inheritance survives the transfer: the
+first lesson's economics, this paper finds, largely do not (Sections 6.5
+and 7), the second lesson's transferred signal proves untenable in its
+transferred form, and the third and fourth lessons' properties were
+never economic claims and are examined on their own terms in Section 7.
+
+\subsection{The transfer table, expanded}
+
+1. Rationed guarantees. Origin: per-flow reservations failed at scale;
+edge-complexity with core aggregates survived \citep{rfc2205,rfc2475}.
+Serving gap: no per-task guarantee exists at any scale. Element: bounded
+reserved subset K over aggregate classes (Section 3). Leak: K's right
+size is workload-dependent and swept, not derived; the evaluation's
+tuner chose the smallest offered (Section 6.5). 2. Early probabilistic
+class-aware shedding. Origin: \citep{floyd1993red,rfc2597}. Serving gap:
+deterministic cliffs (demotion at deadline, rejection at ceiling).
+Element: p(H) ladder (Appendix A). Departure, not transfer: the signal
+is ledger commitments, a forward quantity networks lacked. Leak:
+forecast quality bounds the signal's advantage, and the evaluation found
+no advantage attributable above its noise floor (Section 6.5). 3.
+Fate-independent supervision. Origin: out-of-band management
+\citep{ipmi_spec}. Serving gap: oversight in the supervised pipeline. Element:
+management plane with authority-and-availability independence (Appendix
+A). Leak: signal dependence is retained and conceded. 4.
+Provenance-bound authority at the edge. Origin: ingress source
+validation \citep{rfc2827,rfc3704}. Serving gap: content adjudicated
+downstream can command capacity. Element: trust-keyed reservation
+eligibility (Appendix A). Leak: provenance classes are coarser than
+network paths, and class assignment itself must be trustworthy.

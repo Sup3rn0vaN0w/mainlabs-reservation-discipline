@@ -1,0 +1,100 @@
+% =====================================================================
+% main_mlsys.tex -- MLSys 2027 Research Track target.
+%
+% Venue re-route per D-063: both TMLR submissions were desk-rejected
+% 2026-07-31 and the merged paper was routed here. The 2027 CFP directs
+% authors to the mlsys2025 package, which is installed in this directory
+% UNMODIFIED. It carries geometry tamper checks (textwidth, textheight,
+% margins); altering it is a format violation the venue rejects without
+% review. Do not load geometry, fontenc, natbib or fancyhdr here - the
+% style file already does, and reloading them is the same violation.
+%
+% Blind by default: \usepackage{mlsys2025} suppresses the author block.
+% The camera-ready switches to \usepackage[accepted]{mlsys2025}.
+%
+% Body and appendices are GENERATED. Run gen_sections.py after any change
+% to MERGED_PAPER_v1.0_FROZEN.md; never hand-patch a section file.
+% Four-pass build: pdflatex, bibtex, pdflatex, pdflatex.
+% =====================================================================
+\documentclass{article}
+
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}   % Appendix H, 108 rows, one column
+\usepackage{hyperref}
+\usepackage{url}
+% Let long artifact URLs in the bibliography break rather than run into the
+% margin. Typesetting only: no geometry is touched and the style file is
+% untouched, which is the CG6 T2-h rule.
+\Urlmuskip=0mu plus 1mu\relax
+\def\UrlBreaks{\do\/\do-\do.\do_\do?\do\&\do=\do:}
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+\usepackage{mlsys2025}
+% Camera-ready: \usepackage[accepted]{mlsys2025}
+
+\hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=blue}
+
+% The artifact reference is the only content difference between the blind
+% and named builds (operator ruling 2026-07-24): under blind review the
+% artifact travels WITH the submission as supplementary material, which
+% keeps the release inside the double-blind envelope rather than behind a
+% third-party proxy that would require a public repository.
+\newif\ifanon
+\anontrue
+% \ArtifactStatement is the one build-dependent sentence in the paper. It says
+% WHERE the release is, and it must precede the Artifacts section's claim that
+% nothing reported depends on an unreleased artifact, because that claim is
+% only checkable if the reader can find the release.
+% ANONYMOUS: no DOI, no URL, no identifier (operator ruling 2026-09-14). The
+% CFP rejects anonymisation failures without review, a DOI resolves to a named
+% page, and the upside is a check on an artifact reviewers are not required to
+% read at a venue whose artifact process runs post-acceptance.
+% \ArtifactRepoURL is ALSO consumed by the evalspec2026 bibliography entry, so
+% it must be defined in BOTH branches or the bibliography fails to typeset.
+% Defining it only in the named branch broke the anonymous build, which is how
+% this dependency was found: the macro was never "unused", it was used from the
+% .bbl, where a sweep over the generated section files does not look.
+\ifanon
+  \newcommand{\ArtifactRepoURL}{Supplementary material accompanying this submission}
+  \newcommand{\ArtifactStatement}{The release is public and archived under a
+    DOI; the identifiers are withheld for anonymous review and are supplied in
+    the camera-ready.\ }
+\else
+  \newcommand{\ArtifactDOI}{\texttt{DOI-PENDING-DEPOSIT}}
+  \newcommand{\ArtifactRepoURL}{\url{https://github.com/Sup3rn0vaN0w/mainlabs-reservation-discipline}}
+  \newcommand{\ArtifactStatement}{The release is archived under \ArtifactDOI,
+    with the working repository at \ArtifactRepoURL.\ }
+\fi
+
+\mlsystitlerunning{Reservation-Based Serving for Long-Horizon Agentic Workloads}
+
+\begin{document}
+
+\twocolumn[
+\mlsystitle{An Evaluation of Reservation-Based Serving for Long-Horizon
+Agentic Workloads}
+
+\begin{mlsysauthorlist}
+\mlsysauthor{Sumit P. Ahuja}{ml}
+\end{mlsysauthorlist}
+
+\mlsysaffiliation{ml}{Main Labs}
+
+\mlsyscorrespondingauthor{Sumit P. Ahuja}{sumit@mainlabs.ai}
+
+\mlsyskeywords{serving systems, scheduling, agentic workloads,
+reservations, pre-registered evaluation}
+
+\vskip 0.3in
+
+\input{00_abstract}
+]
+
+\printAffiliationsAndNotice{}
+
+\input{body_mlsys}
+
+\end{document}

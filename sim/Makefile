@@ -9,7 +9,7 @@ ROOT := $(CURDIR)/..
 WORKERS ?= 6
 ARGS ?=
 
-.PHONY: test sanity littles util validate tune pilot grid-project grid-run h1-readout h2-run h3-run ablations-run clean
+.PHONY: test sanity littles util validate tune pilot grid-project grid-run h1-readout h2-run h3-run ablations-run figures tables-all fig-F1 fig-F2a fig-F2b fig-F3 fig-F4 fig-F5 clean
 
 ## test   : run the full unit + sanity test suite
 test:
@@ -58,6 +58,44 @@ h3-run:
 ## ablations-run : run the A1-A5 ablation sweep -> results/ablations/
 ablations-run:
 	cd $(ROOT) && $(PY) -c "from sim.experiments.ablations import run_ablations; from sim.core.orchestration import load_yaml, CONFIG_DIR; print('ran', run_ablations(load_yaml(CONFIG_DIR/'ablations.yaml')))"
+
+## figures : regenerate every figure and table, with assertions
+## fig-FN  : regenerate ONE figure. Each asserts agreement with the frozen
+##           paper numbers before it writes, and an assertion failure is a
+##           STOP-and-escalate rather than a silent redraw:
+##             fig-F1  per-cell improvement vs offered load; median == -10.3
+##             fig-F2a interactive p95 TTFT; 77 guardrail-holding cells at or
+##                     above nominal, band 63.3 to 97.1, corner 468.6 to 526.5
+##             fig-F2b reserved-idle fraction; partition (77, 3, 1)
+##             fig-F3  served value over the load sweep; AUCs match the frozen
+##                     values, relative -3.4 percent
+##             fig-F4  containment and starvation; rates match the frozen T3
+##             fig-F5  horizon censoring; population median in [690, 730] and
+##                     completable-at-200s in [23, 26]
+## tables-all : regenerate T1 to T4 and the 108-row Appendix H table
+figures:
+	cd $(ROOT) && $(PY) -m sim.analysis.figures
+
+fig-F1:
+	cd $(ROOT) && $(PY) -m sim.analysis.figures F1
+
+fig-F2a:
+	cd $(ROOT) && $(PY) -m sim.analysis.figures F2a
+
+fig-F2b:
+	cd $(ROOT) && $(PY) -m sim.analysis.figures F2b
+
+fig-F3:
+	cd $(ROOT) && $(PY) -m sim.analysis.figures F3
+
+fig-F4:
+	cd $(ROOT) && $(PY) -m sim.analysis.figures F4
+
+fig-F5:
+	cd $(ROOT) && $(PY) -m sim.analysis.figures F5
+
+tables-all:
+	cd $(ROOT) && $(PY) -m sim.analysis.figures tables
 
 ## clean  : remove Python caches
 clean:

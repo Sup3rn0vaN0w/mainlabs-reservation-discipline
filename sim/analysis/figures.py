@@ -12,6 +12,20 @@ value is Figure 3 (cited S7.3), containment Figure 4 (S7.4), horizon
 Figure 5 (S8). Assertions travel with their figure's CONTENT, not its
 number, so the renumbering cannot silently rebind a check.
 
+CG6 T2-e/T2-f (2026-09-14), for the MLSys 2027 two-column layout:
+  - the isolation figure is TWO assets, F2a (interactive TTFT, Appendix G)
+    and F2b (reserved-idle, body Section 6.4), sharing one cell ordering
+    and x axis via _f2_layout(). The (77, 3, 1) partition assertion travels
+    with the reserved-idle CONTENT to F2b; F2a gains its own assertion on
+    the 63-to-97-percent improvement band its caption claims.
+  - SINGLE_W is the MLSys column width, 3.25in (was 3.4in one-column), and
+    F1 re-renders single-column at that width. Only geometry changed; no
+    series, no datum and no caption moved.
+  - the PFC-4 numbering above is STALE for the body: CG4 reordered the
+    results spine, so first-citation order is now F4, F5, F1, F2b. The
+    LaTeX label/ref pair carries the rendered number; this module still
+    names assets by their PFC-4 identity so assertions stay bound.
+
 Assertions (FIGURE_SPEC CODE INSTRUCTION + F2 PFC-2 + F5 PFC-3):
   F1: computed per-cell median improvement == -10.3 percent.
   F2: panel (b) finds 77 at-or-above-nominal cells in [93,100], three in
@@ -60,7 +74,7 @@ RESULTS = SIM_ROOT / "experiments" / "results"
 OUT_FIG = SIM_ROOT / "analysis" / "figures"
 OUT_TAB = SIM_ROOT / "analysis" / "tables"
 
-SINGLE_W, DOUBLE_W = 3.4, 7.0
+SINGLE_W, DOUBLE_W = 3.25, 7.0
 
 # Okabe-Ito, grayscale-distinguishable ordering; one fixed slot per policy.
 POLICY_STYLE = {
@@ -150,7 +164,7 @@ def fig_f1() -> None:
 
     import random
     rng = random.Random(20260721)
-    fig, ax = plt.subplots(figsize=(DOUBLE_W, 3.1), layout="constrained")
+    fig, ax = plt.subplots(figsize=(SINGLE_W, 3.6), layout="constrained")
     ax.axhspan(-30, 5, color="0.94", zorder=0)
     ax.axhline(0, color="0.2", lw=0.8)
     for y, lab in ((5, "WEAK (+5%)"), (10, "SUPPORT (+10%)")):
@@ -180,7 +194,8 @@ def fig_f1() -> None:
     other_h = [plt.Line2D([], [], color="0.35", marker="o", ls="", ms=4,
                           mfc="none", label="guardrail FAIL"),
                plt.Line2D([], [], color="black", lw=2.2, label="per-load median")]
-    ax.legend(handles=mix_h + gap_h + other_h, ncol=4,
+    ax.legend(handles=mix_h + gap_h + other_h, ncol=2, fontsize=5.5,
+              handletextpad=0.4, columnspacing=0.8, labelspacing=0.25,
               loc="lower center", bbox_to_anchor=(0.5, 1.01), frameon=False)
     ax.set_xlabel("offered load (x measured capacity)")
     ax.set_ylabel("improvement vs best baseline (%)")
@@ -191,9 +206,18 @@ def fig_f1() -> None:
     print(f"[figures] F1 ASSERT PASS: median == {med}")
 
 
-# --- F2: isolation and stranding ----------------------------------------------
+# --- F2: isolation and stranding, TWO assets since CG6 T2-e -------------------
+# Panel (a) of the old plt.subplots(2,1) PDF is now F2a and lives in Appendix G;
+# panel (b) is F2b and stays in the body, where Section 6.4 cites the 93-100
+# band. Both panels keep the shared cell ordering and x axis (_f2_layout).
 
-def fig_f2() -> None:
+def _f2_layout():
+    """Shared cell ordering, x positions and group ticks for both panels.
+
+    Panels (a) and (b) of the old single asset are now two figures (CG6 T2-e);
+    they must stay on the same x axis so a reader comparing them across the
+    body/appendix split reads the same cell in the same place.
+    """
     core, _ = _core_cells()
     manifests = _load("*.json")
     res_by_cell: dict[str, dict[str, list]] = {}
@@ -206,6 +230,98 @@ def fig_f2() -> None:
 
     order = sorted(core, key=lambda c: (_loadof(c.cell_key), _mixof(c.cell_key),
                                         c.cell_key))
+    xs, group_ticks, group_labels = [], [], []
+    x = 0.0
+    prev = None
+    for c in order:
+        g = (_loadof(c.cell_key), _mixof(c.cell_key))
+        if prev is not None and g != prev:
+            x += 2.5 if g[0] != prev[0] else 1.2
+        xs.append(x)
+        x += 1.0
+        prev = g
+    for g in sorted({(_loadof(c.cell_key), _mixof(c.cell_key)) for c in order}):
+        pos = [xi for xi, c in zip(xs, order)
+               if (_loadof(c.cell_key), _mixof(c.cell_key)) == g]
+        group_ticks.append(sum(pos) / len(pos))
+        group_labels.append(f"{g[0]:g}x / {int(g[1] * 100)}%")
+    return order, xs, group_ticks, group_labels, res_by_cell
+
+
+def _f2_xaxis(ax, group_ticks, group_labels) -> None:
+    ax.set_xticks(group_ticks)
+    ax.set_xticklabels(group_labels, rotation=45, ha="right", fontsize=6)
+    ax.set_xlabel("cell groups: offered load / agentic mix "
+                  "(9 cells per group: 3 gaps x 3 cluster sizes)")
+
+
+# --- F2a: interactive TTFT change (APPENDIX G) --------------------------------
+
+def fig_f2a() -> None:
+    order, xs, group_ticks, group_labels, _ = _f2_layout()
+    hi = [c for c in order if _loadof(c.cell_key) >= 1.0]
+    ok = [c for c in hi if c.guardrail_ok]
+    gains = sorted(-c.ttft_degradation * 100 for c in ok)
+    # One decimal, matching what the caption states under the PFC-6 rule:
+    # a stated range contains every measured value and asserts no endpoint
+    # the data lacks.
+    lo, hi_g = round(gains[0], 1), round(gains[-1], 1)
+    if (len(ok), lo, hi_g) != (77, 63.3, 97.1):
+        _fail(f"F2a at-or-above-nominal guardrail-holding cells and improvement "
+              f"band = ({len(ok)}, {lo}, {hi_g}) != (77, 63.3, 97.1)")
+    if sum(1 for g in gains if g > 90) * 2 <= len(gains):
+        _fail("F2a: improvement exceeds 90 percent in fewer than most cells")
+
+    fig, ax = plt.subplots(figsize=(DOUBLE_W, 3.2), layout="constrained")
+    ax.axhline(0, color="0.2", lw=0.8)
+    ax.axhline(5, color="0.4", lw=0.8, ls="--")
+    ax.annotate("guardrail (+5%)", xy=(xs[-1], 5), xytext=(-2, 4),
+                textcoords="offset points", fontsize=6, color="0.25",
+                ha="right")
+    corner_pts = []
+    for xi, c in zip(xs, order):
+        y = c.ttft_degradation * 100
+        if not c.guardrail_ok:
+            ax.scatter(xi, y, marker="^", s=22, facecolor="none",
+                       edgecolor="#D55E00", lw=1.0, zorder=4)
+            if y > 100:
+                corner_pts.append((xi, y))
+        else:
+            ax.scatter(xi, y, marker="o", s=9, color="#0072B2",
+                       edgecolor="white", lw=0.4, zorder=3, alpha=0.75)
+    ax.set_yscale("symlog", linthresh=10)
+    ax.set_yticks([-100, -10, 0, 10, 100, 500])
+    ax.set_yticklabels(["-100", "-10", "0", "+10", "+100", "+500"])
+    ax.set_ylabel("p95 TTFT change\nvs best baseline (%)")
+    if corner_pts:
+        # PFC-5 replaced "+470 to +530" with "+469 to +526": a band wrong
+        # OUTWARD with one wrong INWARD. PFC-6 states the measured extremes
+        # at one decimal instead, 468.6 and 526.5 against measured 468.57,
+        # 501.66 and 526.49, under the standing rule that a stated range must
+        # contain every measured value and assert no endpoint the data lacks.
+        # The assertion moves with the annotation by design: it exists so the
+        # annotation cannot drift from the data.
+        cys = sorted(p[1] for p in corner_pts)
+        lo_c, hi_c = round(cys[0], 1), round(cys[-1], 1)
+        if (len(cys), lo_c, hi_c) != (3, 468.6, 526.5):
+            _fail(f"F2a inversion corner = ({len(cys)} cells, {lo_c} to "
+                  f"{hi_c} percent) != (3 cells, 468.6 to 526.5)")
+        cx = statistics.mean([p[0] for p in corner_pts])
+        ax.annotate(f"inversion corner\n(+{lo_c} to +{hi_c}%)", xy=(cx, 500),
+                    xytext=(-58, -4), textcoords="offset points", fontsize=6,
+                    va="top",
+                    arrowprops=dict(arrowstyle="-", lw=0.6, color="0.3"))
+    _f2_xaxis(ax, group_ticks, group_labels)
+    _save(fig, "F2a_interactive_ttft")
+    print(f"[figures] F2a ASSERT PASS: {len(ok)} guardrail-holding cells at or "
+          f"above nominal, improvement band {lo} to {hi_g} percent; "
+          f"inversion corner {lo_c} to {hi_c} percent over 3 cells")
+
+
+# --- F2b: reserved-idle fraction (BODY, Section 6.4) --------------------------
+
+def fig_f2b() -> None:
+    order, xs, group_ticks, group_labels, res_by_cell = _f2_layout()
     hi = [c for c in order if _loadof(c.cell_key) >= 1.0]
 
     in_band = band_low = zero_resv = 0
@@ -219,83 +335,37 @@ def fig_f2() -> None:
         elif 88.0 <= idle < 90.0:
             band_low += 1
     if (in_band, band_low, zero_resv) != (77, 3, 1):
-        _fail(f"F2 partition (in [93,100], in [88,90], zero-reservation) = "
+        _fail(f"F2b partition (in [93,100], in [88,90], zero-reservation) = "
               f"({in_band}, {band_low}, {zero_resv}) != (77, 3, 1)")
 
-    # Grouped x positions: 12 groups (load x mix), gap between groups.
-    xs, group_ticks, group_labels = [], [], []
-    x = 0.0
-    prev = None
-    for c in order:
-        g = (_loadof(c.cell_key), _mixof(c.cell_key))
-        if prev is not None and g != prev:
-            x += 2.5 if g[0] != prev[0] else 1.2
-        xs.append(x)
-        x += 1.0
-        prev = g
-    for g in sorted({( _loadof(c.cell_key), _mixof(c.cell_key)) for c in order}):
-        pos = [xi for xi, c in zip(xs, order)
-               if (_loadof(c.cell_key), _mixof(c.cell_key)) == g]
-        group_ticks.append(sum(pos) / len(pos))
-        group_labels.append(f"{g[0]:g}x / {int(g[1] * 100)}%")
-
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(DOUBLE_W, 4.4), sharex=True,
-                                   layout="constrained")
-    ax1.axhline(0, color="0.2", lw=0.8)
-    ax1.axhline(5, color="0.4", lw=0.8, ls="--")
-    ax1.annotate("guardrail (+5%)", xy=(xs[-1], 5), xytext=(-2, 4),
-                 textcoords="offset points", fontsize=6, color="0.25",
-                 ha="right")
-    corner_pts = []
-    for xi, c in zip(xs, order):
-        y = c.ttft_degradation * 100
-        if not c.guardrail_ok:
-            ax1.scatter(xi, y, marker="^", s=22, facecolor="none",
-                        edgecolor="#D55E00", lw=1.0, zorder=4)
-            if y > 100:
-                corner_pts.append((xi, y))
-        else:
-            ax1.scatter(xi, y, marker="o", s=9, color="#0072B2",
-                        edgecolor="white", lw=0.4, zorder=3, alpha=0.75)
-    ax1.set_yscale("symlog", linthresh=10)
-    ax1.set_yticks([-100, -10, 0, 10, 100, 500])
-    ax1.set_yticklabels(["-100", "-10", "0", "+10", "+100", "+500"])
-    ax1.set_ylabel("p95 TTFT change\nvs best baseline (%)")
-    if corner_pts:
-        cx = statistics.mean([p[0] for p in corner_pts])
-        ax1.annotate("inversion corner\n(+470 to +530%)", xy=(cx, 500),
-                     xytext=(-58, -4), textcoords="offset points", fontsize=6,
-                     va="top",
-                     arrowprops=dict(arrowstyle="-", lw=0.6, color="0.3"))
-
-    ax2.axhspan(93, 100, color="0.94", zorder=0)
+    fig, ax = plt.subplots(figsize=(SINGLE_W, 2.9), layout="constrained")
+    ax.axhspan(93, 100, color="0.94", zorder=0)
     for xi, c in zip(xs, order):
         idle = statistics.median(res_by_cell[c.cell_key]["idle"])
         resv = statistics.median(res_by_cell[c.cell_key]["resv"])
         if resv == 0:
-            ax2.scatter(xi, idle, marker="s", s=24, facecolor="none",
-                        edgecolor="#D55E00", lw=1.0, zorder=4)
-            ax2.annotate("no reservations granted", xy=(xi, idle),
-                         xytext=(-70, 16), textcoords="offset points",
-                         fontsize=6,
-                         arrowprops=dict(arrowstyle="-", lw=0.6, color="0.3"))
+            ax.scatter(xi, idle, marker="s", s=24, facecolor="none",
+                       edgecolor="#D55E00", lw=1.0, zorder=4)
+            ax.annotate("no reservations\ngranted", xy=(xi, idle),
+                        xytext=(-46, 20), textcoords="offset points",
+                        fontsize=5.5,
+                        arrowprops=dict(arrowstyle="-", lw=0.6, color="0.3"))
         elif idle < 93 and _loadof(c.cell_key) >= 1.0:
-            ax2.scatter(xi, idle, marker="o", s=20, facecolor="none",
-                        edgecolor="#D55E00", lw=1.0, zorder=4)
+            ax.scatter(xi, idle, marker="o", s=20, facecolor="none",
+                       edgecolor="#D55E00", lw=1.0, zorder=4)
         else:
-            ax2.scatter(xi, idle, marker="o", s=9, color="#009E73",
-                        edgecolor="white", lw=0.4, zorder=3, alpha=0.75)
-    ax2.annotate("93-100 band", xy=(xs[1], 93), xytext=(-4, -14),
-                 textcoords="offset points", fontsize=6, color="0.3",
-                 arrowprops=dict(arrowstyle="-", lw=0.5, color="0.5"))
-    ax2.set_ylabel("reserved-idle\nfraction (%)")
-    ax2.set_ylim(-5, 106)
-    ax2.set_xticks(group_ticks)
-    ax2.set_xticklabels(group_labels, rotation=45, ha="right", fontsize=6)
-    ax2.set_xlabel("cell groups: offered load / agentic mix "
-                   "(9 cells per group: 3 gaps x 3 cluster sizes)")
-    _save(fig, "F2_isolation_and_stranding")
-    print("[figures] F2 ASSERT PASS: partition == (77, 3, 1)")
+            ax.scatter(xi, idle, marker="o", s=9, color="#009E73",
+                       edgecolor="white", lw=0.4, zorder=3, alpha=0.75)
+    ax.annotate("93-100 band", xy=(xs[1], 93), xytext=(-2, -13),
+                textcoords="offset points", fontsize=5.5, color="0.3",
+                arrowprops=dict(arrowstyle="-", lw=0.5, color="0.5"))
+    ax.set_ylabel("reserved-idle\nfraction (%)")
+    ax.set_ylim(-5, 106)
+    ax.set_xticks(group_ticks)
+    ax.set_xticklabels(group_labels, rotation=45, ha="right", fontsize=5.5)
+    ax.set_xlabel("cell groups: offered load / agentic mix", fontsize=7)
+    _save(fig, "F2b_reserved_idle")
+    print("[figures] F2b ASSERT PASS: partition == (77, 3, 1)")
 
 
 # --- F3: H2 served value ------------------------------------------------------
@@ -477,7 +547,7 @@ def tables_all() -> None:
 
     # T1 - policy roster with tuned values (tuned_params.json: policy -> family).
     tuned = json.loads((SIM_ROOT / "configs" / "tuned_params.json").read_text())
-    t1 = [r"\begin{tabular}{llp{3.1in}}", r"\toprule",
+    t1 = [r"\begin{tabular}{llp{4.3in}}", r"\toprule",
           r"policy & workload family & tuned parameters \\", r"\midrule"]
     for pol in sorted(tuned):
         fams = tuned[pol]
@@ -520,20 +590,21 @@ def tables_all() -> None:
     print(f"[figures] wrote tables T1-T4 + Appendix D to {OUT_TAB}")
 
 
-FIGS = {"F1": fig_f1, "F2": fig_f2, "F3": fig_f3, "F4": fig_f4, "F5": fig_f5}
+FIGS = {"F1": fig_f1, "F2a": fig_f2a, "F2b": fig_f2b, "F3": fig_f3,
+        "F4": fig_f4, "F5": fig_f5}
 
 
 def main(argv: list[str]) -> None:
     targets = argv or ["all"]
     if targets == ["all"]:
-        targets = ["F1", "F2", "F3", "F4", "F5", "tables"]
+        targets = ["F1", "F2a", "F2b", "F3", "F4", "F5", "tables"]
     for t in targets:
         if t == "tables":
             tables_all()
         elif t in FIGS:
             FIGS[t]()
         else:
-            print(f"unknown target {t}; use F1..F3 or tables")
+            print(f"unknown target {t}; use F1, F2a, F2b, F3, F4, F5 or tables")
             sys.exit(1)
 
 

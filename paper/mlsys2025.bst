@@ -1,9 +1,8 @@
-%% File: `tmlr.bst'
-%% A copy of iclm2010.bst, which is a modification of `plainnl.bst' for use with natbib package 
+%% File: `mlsys2024.bst'
+%% A modification of `plainnl.bst' for use with natbib package 
 %%
 %% Copyright 2010 Hal Daum\'e III
-%% Modified by J. Fürnkranz
-%% - Changed labels from (X and Y, 2000) to (X & Y, 2000)
+%% Modified by Dimitris Papailiopoulos based on `icml2018.bst`
 %%
 %% Copyright 1993-2007 Patrick W Daly
 %% Max-Planck-Institut f\"ur Sonnensystemforschung
@@ -223,7 +222,7 @@ FUNCTION {format.names}
   s num.names$ 'numnames :=
   numnames 'namesleft :=
     { namesleft #0 > }
-    { s nameptr "{ff~}{vv~}{ll}{, jj}" format.name$ 't :=
+    { s nameptr "{vv~}{ll}{, jj}{, f.}" format.name$ 't :=
       nameptr #1 >
         { namesleft #1 >
             { ", " * t * }
@@ -1216,7 +1215,7 @@ FUNCTION {sort.format.names}
   numnames 'namesleft :=
     { namesleft #0 > }
     {
-      s nameptr "{vv{ } }{ll{ }}{  ff{ }}{  jj{ }}" format.name$ 't :=
+      s nameptr "{vv{ } }{ll{ }}{  f{ }}{  jj{ }}" format.name$ 't :=
       nameptr #1 >
         {
           "   "  *

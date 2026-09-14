@@ -1,0 +1,62 @@
+\section{Limitations}
+
+Simulation only. The hardware phase was pre-gated on this evaluation
+supporting the mechanism, and the gate closed; every number here is
+conditioned on the simulator's service model. The model's constants are
+literature-anchored, marked low confidence, and their measured
+sensitivity is the paper's principal caveat: the binding constant moves
+the representative deficit between 4.4 and 21.5 percent, sign-stable
+throughout. Synthetic workloads: no public traces of long-horizon
+agentic serving existed at specification freeze; generators, anchors,
+and seeds are released, and the adversarial family is constructed, not
+observed. Three seeds per cell (Amendment 3): intervals are wider at low
+load, and several 0.7x cells have upper bounds crossing zero
+individually, though the verdict is invariant to how they are read,
+since taking every cell at its most favourable bound yields 33 of 108
+reaching the support threshold against the 65 required. Cluster sizes 8
+to 32: the 64-device axis was removed for measured infeasibility at the
+corrected horizon; the trend across measured sizes is flat, and the
+memory-bound regime is probed at one configuration rather than swept.
+Value weights are operator-supplied, fixed at registration, and swept in
+sensitivity. H2 and H3 are measured on representative configurations,
+not crossed with the full grid. The two-cell ablation design cannot
+separate any element's effect from its measured seed-noise floor at
+three replications; the campaign attributes the mechanism's cost to the
+workload's structural duty cycle, and finer per-element attribution
+requires swept axes and more seeds (data released). The comparison also
+sets a single completion-oriented policy against six request-oriented
+ones, so it prices this contract rather than the class of contracts; a
+differently designed completion guarantee is untested here. One boundary
+is a non-goal rather than a limitation: this layer enforces decisions
+about flows, their admission, their bounds and their termination, and
+makes no content-level judgement about what a flow says or does. The
+service model does not represent chunked prefill, so one mechanism of
+the deadline-ordered family is unmodelled.
+
+Four gaps in the specification were surfaced by readers after the paper
+was frozen and are named here rather than quietly repaired. The
+discipline specifies when a reservation ends, by expiry, exhaustion,
+renegotiation or halt, and never specifies what becomes of the
+accumulated pinned state on any of those paths, although Section 3 makes
+that state load-bearing. The guarantee is scoped to resource-motivated
+action and the halt to safety revocation, so an erasure obligation
+arriving from outside the serving stack is neither, and the layer has no
+correct move when a reservation lifetime exceeds an erasure deadline.
+The disposition vocabulary cannot hold a non-terminating state, yet
+Section 6.1 measured one: flows admitted, never scheduled, still live at
+the horizon, in none of the four categories. And the workload's idle-gap
+distribution is uncertain in both directions at once. Deployments
+interposing a human confirmation step, as information-flow control
+layers for agents do, carry a tail longer than we modelled, which would
+deepen the stranding; production measurement of tool-call latency share
+\citep{sutradhara2026} suggests our tool-time anchors may instead be long,
+which would shorten it. The sensitivity axis contains no arm below its
+own anchor. The verdict is robust to the anchor in either direction,
+since Section 6.3 measures that shorter gaps produce larger deficits,
+but the attribution of the cost to a roughly 5 percent duty cycle is
+conditional on it.
+
+Finally, the
+registration's one-fix clause means any residual measurement artifact, in
+either direction, stands uncorrected in these numbers by design; the
+amendment log is the complete record of what was corrected and when.
