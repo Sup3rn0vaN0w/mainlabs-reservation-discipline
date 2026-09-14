@@ -1,10 +1,10 @@
 archive        reservation-discipline-eval
 paper          An Evaluation of Reservation-Based Serving for Long-Horizon Agentic Workloads
 version        MERGED_PAPER v1.0 frozen 2026-07-21, compressed for MLSys 2027 through gates CG1 to CG7
-built from     ebd0d943f9e8
+built from     ebd0d943f9e8 (working tree dirty at build)
 final grid     99706eb, the commit that produced the released manifests
 built on       2026-09-14
 contents       the frozen evaluation specification with its amendment log, the simulator and its tests, both tuning campaigns, every run manifest, the readouts, and the paper source
 derivation     built by build_artifact_repos.py from an explicit include-list; nothing here is authored in place
-integrity      MANIFEST.sha256 covers 3244 files and was verified at build time
+integrity      MANIFEST.sha256 covers 3245 files and was verified at build time
 house style    hyphens only (D-026)

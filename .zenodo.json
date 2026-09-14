@@ -1,0 +1,31 @@
+{
+  "title": "Evaluation artifact: An Evaluation of Reservation-Based Serving for Long-Horizon Agentic Workloads",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "apache-2.0",
+  "creators": [
+    {
+      "name": "Ahuja, Sumit P.",
+      "affiliation": "Main Labs",
+      "orcid": "0009-0009-3487-5001"
+    }
+  ],
+  "description": "<p>Complete evaluation artifact for the paper <em>An Evaluation of Reservation-Based Serving for Long-Horizon Agentic Workloads</em>: a pre-registered, negative-result evaluation of per-flow completion guarantees for long-horizon agentic LLM serving, against six equally tuned baselines on a discrete-event simulator.</p><p>Contains the evaluation specification frozen 2026-07-06 with its complete amendment log and integrity rulings; the simulator with 141 tests; the tuning harness with both tuning campaigns at the censored and corrected horizons; every run manifest including the quarantined pre-amendment set; the preliminary readouts with their superseded banners intact; the final readout and the analysis code that computes the verdict as a pure function of the manifest set; figure-generation code with one command per figure, each asserting agreement with the published numbers; and the paper source.</p><p>Nothing reported in the paper depends on an unreleased artifact. MANIFEST.sha256 covers every file and PROVENANCE.txt records the commit, date and final-grid commit the release was built from.</p><p><strong>Licensing is split.</strong> Code, meaning sim/ and the paper build tooling, is Apache License 2.0. Documents and data, meaning the readouts, manifests, specification, paper text and figures, are Creative Commons Attribution 4.0. See LICENSE and LICENSE-DOCS.</p>",
+  "keywords": [
+    "machine learning systems",
+    "LLM serving",
+    "agentic workloads",
+    "scheduling",
+    "resource reservation",
+    "pre-registered evaluation",
+    "negative result",
+    "reproducibility"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/Sup3rn0vaN0w/mainlabs-reservation-discipline",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}
