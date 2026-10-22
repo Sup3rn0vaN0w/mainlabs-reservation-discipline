@@ -36,6 +36,15 @@
 % Camera-ready: \usepackage[accepted]{mlsys2025}
 
 \hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=blue}
+% PUBLIC-COPY NOTICE (operator ruling 2026-10-22). Inserted by
+% build_artifact_repos.py into this public copy only. The style's blind
+% notice states that the paper is under review at a venue; this copy
+% replaces it with a neutral notice and clears the PDF subject. The
+% venue submission is built from the unmodified source.
+\makeatletter
+\renewcommand{\Notice@String}{Double-blind build of the paper. Licensed CC BY 4.0.}
+\makeatother
+\hypersetup{pdfsubject={}}
 
 % The artifact reference is the only content difference between the blind
 % and named builds (operator ruling 2026-07-24): under blind review the
@@ -63,7 +72,13 @@
     DOI; the identifiers are withheld for anonymous review and are supplied in
     the camera-ready.\ }
 \else
-  \newcommand{\ArtifactDOI}{\texttt{DOI-PENDING-DEPOSIT}}
+  % The VERSION DOI, not the concept DOI. The concept DOI always resolves
+  % to the latest version, which is wrong for a paper: a reader following
+  % this citation must land on the artifact these numbers came from, not
+  % on whatever superseded it. Zenodo record 22759004, GitHub release
+  % v1.0.0 at tree 91c927cd5cec. Concept DOI 10.5281/zenodo.22759003 is
+  % in the repository README, where "latest" is the right behaviour.
+  \newcommand{\ArtifactDOI}{\href{https://doi.org/10.5281/zenodo.22759004}{\texttt{10.5281/zenodo.22759004}}}
   \newcommand{\ArtifactRepoURL}{\url{https://github.com/Sup3rn0vaN0w/mainlabs-reservation-discipline}}
   \newcommand{\ArtifactStatement}{The release is archived under \ArtifactDOI,
     with the working repository at \ArtifactRepoURL.\ }

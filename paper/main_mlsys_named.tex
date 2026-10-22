@@ -39,6 +39,19 @@
 
 \hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=blue}
 
+% PREPRINT NOTICE (T-060, 2026-10-22). The [accepted] option sets the page-1
+% notice to the style's camera-ready string ("Proceedings of the 8th MLSys
+% Conference ... Copyright 2025 by the author(s).") and pdfsubject={mlsys 2025}.
+% This paper is not an MLSys proceedings paper, so a reading build carrying that
+% footer misstates where it was published. Override both here, in the preamble;
+% mlsys2025.sty stays untouched and main_mlsys.tex (the blind submission target)
+% does not get these lines. Any re-derivation of this file from main_mlsys.tex
+% must carry these four lines. Licence matches the arXiv submission (CC BY 4.0).
+\makeatletter
+\renewcommand{\Notice@String}{Preprint. Licensed CC BY 4.0.}
+\makeatother
+\hypersetup{pdfsubject={}}
+
 % The artifact reference is the only content difference between the blind
 % and named builds (operator ruling 2026-07-24): under blind review the
 % artifact travels WITH the submission as supplementary material, which
@@ -65,7 +78,13 @@
     DOI; the identifiers are withheld for anonymous review and are supplied in
     the camera-ready.\ }
 \else
-  \newcommand{\ArtifactDOI}{\texttt{DOI-PENDING-DEPOSIT}}
+  % The VERSION DOI, not the concept DOI. The concept DOI always resolves
+  % to the latest version, which is wrong for a paper: a reader following
+  % this citation must land on the artifact these numbers came from, not
+  % on whatever superseded it. Zenodo record 22759004, GitHub release
+  % v1.0.0 at tree 91c927cd5cec. Concept DOI 10.5281/zenodo.22759003 is
+  % in the repository README, where "latest" is the right behaviour.
+  \newcommand{\ArtifactDOI}{\href{https://doi.org/10.5281/zenodo.22759004}{\texttt{10.5281/zenodo.22759004}}}
   \newcommand{\ArtifactRepoURL}{\url{https://github.com/Sup3rn0vaN0w/mainlabs-reservation-discipline}}
   \newcommand{\ArtifactStatement}{The release is archived under \ArtifactDOI,
     with the working repository at \ArtifactRepoURL.\ }
